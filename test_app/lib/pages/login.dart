@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
             Container(
               width: 600,
               height: 500,
-              margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+              margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: const Center(
                   child: Text(
                 "Welcome, please login!",
@@ -28,7 +28,7 @@ class LoginPage extends StatelessWidget {
             Container(
               width: 400,
               height: 500,
-              margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+              margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(20)),
               child: Center(
