@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginPage(),
-        '/driver': (context) => const Driver()
+        '/driver': (context) => const Driver(),
       },
     );
   }
