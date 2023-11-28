@@ -11,6 +11,14 @@ final List<RouteInfo> routes = <RouteInfo>[
   RouteInfo('This Route', 'Rainy', 'Location 5', 'Location 6'),
   RouteInfo('This Route', 'Rainy', 'Location 6', 'Location 7'),
   RouteInfo('This Route', 'Rainy', 'Location 7', 'Location 8'),
+  RouteInfo('This Route', 'Rainy', 'Location 8', 'Location 9'),
+  RouteInfo('Some Route', 'Sunny', 'Location 1', 'Location 2'),
+  RouteInfo('This Route', 'Rainy', 'Location 2', 'Location 3'),
+  RouteInfo('This Route', 'Rainy', 'Location 3', 'Location 4'),
+  RouteInfo('This Route', 'Rainy', 'Location 4', 'Location 5'),
+  RouteInfo('This Route', 'Rainy', 'Location 5', 'Location 6'),
+  RouteInfo('This Route', 'Rainy', 'Location 6', 'Location 7'),
+  RouteInfo('This Route', 'Rainy', 'Location 7', 'Location 8'),
   RouteInfo('This Route', 'Rainy', 'Location 8', 'Location 9')
 ];
 
@@ -64,7 +72,7 @@ class Driver extends StatelessWidget {
             decoration: const BoxDecoration(
                 border:
                     Border(right: BorderSide(width: 1, color: Colors.white))),
-            child: const Icon(Icons.drive_eta),
+            child: const Icon(Icons.fire_truck),
           ),
           title: Text(
             routes[index].routeName,
