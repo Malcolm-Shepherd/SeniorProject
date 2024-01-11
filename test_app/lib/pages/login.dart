@@ -6,6 +6,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.grey,
       body: Center(
         child: Column(
@@ -14,7 +15,7 @@ class LoginPage extends StatelessWidget {
           children: [
             Container(
               width: 600,
-              height: 500,
+              height: 100,
               margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: const Center(
                   child: Text(
