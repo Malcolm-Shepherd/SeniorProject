@@ -23,7 +23,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
     setState(() {
       _currPos = position;
     });
-    mapController.move(new LatLng(position.latitude , position.longitude), 1000);
+    mapController.moveAndRotate(new LatLng(position.latitude , position.longitude), 1000, 0);
   }
   /// Determine the current position of the device.
   ///
