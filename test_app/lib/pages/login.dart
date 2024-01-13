@@ -14,19 +14,6 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 600,
-              height: 100,
-              margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: const Center(
-                  child: Text(
-                "Welcome, please login!",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 50,
-                    fontWeight: FontWeight.w200),
-              )),
-            ),
-            Container(
               width: 400,
               height: 500,
               margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -37,8 +24,11 @@ class LoginPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Text(
-                        "Please select a role below:",
-                        style: TextStyle(fontSize: 30),
+                        "Please select\n a role below:",
+                        style: TextStyle(
+                            fontSize: 35,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold),
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -53,7 +43,7 @@ class LoginPage extends StatelessWidget {
                           ),
                           ElevatedButton(
                             onPressed: () =>
-                                {Navigator.pushNamed(context, '/driver')},
+                                {Navigator.pushNamed(context, '/notes')},
                             child: const Text(
                               "Notes",
                               style: TextStyle(fontSize: 20),
@@ -61,7 +51,7 @@ class LoginPage extends StatelessWidget {
                           ),
                           ElevatedButton(
                             onPressed: () =>
-                                {Navigator.pushNamed(context, '/driver')},
+                                {Navigator.pushNamed(context, '/tasks')},
                             child: const Text(
                               "Task Handling",
                               style: TextStyle(fontSize: 20),
