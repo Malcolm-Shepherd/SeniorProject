@@ -23,7 +23,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
     setState(() {
       _currPos = position;
     });
-    mapController.moveAndRotate(new LatLng(position.latitude , position.longitude), 1000, 0);
+    mapController.moveAndRotate(new LatLng(position.latitude , position.longitude), 17, 0);
   }
   /// Determine the current position of the device.
   ///
@@ -95,8 +95,9 @@ class _RouteDisplayState extends State<RouteDisplay> {
         mapController: mapController,
         options: const MapOptions(
           initialCenter: LatLng(51.509364, -0.128928),
-          maxZoom: 10,
-          minZoom: 2,
+          initialZoom: 10,
+          maxZoom: 20,
+          minZoom: 1,
         ),
         children: [
           TileLayer(
