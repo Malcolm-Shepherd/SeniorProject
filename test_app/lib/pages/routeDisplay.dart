@@ -36,8 +36,9 @@ class _RouteDisplayState extends State<RouteDisplay> {
         mapController: MapController(),
         options: const MapOptions(
           initialCenter: LatLng(51.509364, -0.128928),
-          maxZoom: 10,
-          minZoom: 2,
+          initialZoom: 10,
+          maxZoom: 20,
+          minZoom: 1,
         ),
         children: [
           TileLayer(
