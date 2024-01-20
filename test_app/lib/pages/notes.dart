@@ -59,7 +59,7 @@ class Notes extends StatelessWidget {
             decoration: const BoxDecoration(
                 border:
                     Border(right: BorderSide(width: 1, color: Colors.white))),
-            child: const Icon(Icons.fire_truck),
+            child: const Icon(Icons.domain),
           ),
           title: Text(
             locations[index].locationName,

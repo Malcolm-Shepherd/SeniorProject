@@ -20,8 +20,41 @@ class NotesDisplay extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: () {},
+            icon: const Icon(Icons.add),
+            onPressed: () => showDialog(
+                context: context,
+                builder: (BuildContext context) => Dialog(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Text("data"),
+                            TextFormField(
+                              decoration: const InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: 'Note title'),
+                            ),
+                            TextFormField(
+                              decoration: const InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: 'Note body',
+                                  isDense: true,
+                                  alignLabelWithHint: false),
+                              maxLines: null,
+                            ),
+                            const SizedBox(height: 15),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Close'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
           )
         ],
       ),

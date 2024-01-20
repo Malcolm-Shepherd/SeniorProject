@@ -15,7 +15,6 @@ class RouteDisplay extends StatefulWidget {
 }
 
 class _RouteDisplayState extends State<RouteDisplay> {
-
   Position? _currPos;
   final mapController = MapController();
   void _getCurrentPos() async {
@@ -23,8 +22,10 @@ class _RouteDisplayState extends State<RouteDisplay> {
     setState(() {
       _currPos = position;
     });
-    mapController.moveAndRotate(new LatLng(position.latitude , position.longitude), 17, 0);
+    mapController.moveAndRotate(
+        new LatLng(position.latitude, position.longitude), 17, 0);
   }
+
   /// Determine the current position of the device.
   ///
   /// When the location services are not enabled or permissions
@@ -67,7 +68,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _getCurrentPos();
   }
@@ -91,6 +92,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
           )
         ],
       ),
+      // Mapping widget
       body: FlutterMap(
         mapController: mapController,
         options: const MapOptions(
@@ -104,6 +106,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.example.app',
           ),
+          // Row used to display data on top of map widget
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Column(mainAxisAlignment: MainAxisAlignment.end, children: [
               Container(
@@ -117,6 +120,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
+                          // Column 1 used to display temporary data
                           Column(children: [
                             Text(
                               "21.6 mi",
@@ -147,6 +151,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
                           ])
                         ],
                       ),
+                      // Column 2 used to display temporary data
                       Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -179,6 +184,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
                                       fontSize: 10))
                             ])
                           ]),
+                      // Column 3 used to display temporary data
                       Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
