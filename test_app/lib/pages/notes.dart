@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:test_app/objects/Location.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:test_app/pages/noteDisplay.dart';
 
 final List<LocationInfo> locations = <LocationInfo>[
@@ -11,6 +12,18 @@ final List<LocationInfo> locations = <LocationInfo>[
   LocationInfo('This Location', 4),
   LocationInfo('This Location', 5)
 ];
+
+Future<List<Map<String, dynamic>>> loadMockData() async {
+  // Get the json data from MOCK_SITE_LOCATION.json
+  String jsonStr =
+      await rootBundle.loadString('mock_data/MOCK_SITE_LOCATION.json');
+  //
+  List<dynamic> jsonList = json.decode(jsonStr);
+  //
+  return jsonList.cast<Map<String, dynamic>>();
+}
+
+List<Map<String, dynamic>> dataList = [];
 
 class Notes extends StatelessWidget {
   const Notes({super.key});
@@ -34,18 +47,41 @@ class Notes extends StatelessWidget {
           )
         ],
       ),
-      body: ListView.builder(
-          itemCount: locations.length,
-          itemBuilder: (context, index) => GestureDetector(
-              onTap: () => {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => NotesDisplay()))
-                  },
-              child: routeButton(index))),
+      body: FutureBuilder(
+        future: loadMockData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot == null) {
+              return Text("null data");
+            } else if (snapshot.data != null) {
+              return ListViewBuilder(snapshot.data);
+            }
+          } else {
+            return Center(child: Text("Error with connection"));
+          }
+
+          return Center(child: Text("Error"));
+        },
+      ),
     );
   }
 
-  Card routeButton(int index) {
+  Widget ListViewBuilder(List<Map<String, dynamic>>? data) {
+    data ??= [];
+
+    return ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, index) => GestureDetector(
+            onTap: () => {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => NotesDisplay()))
+                },
+            child: routeButton(index, data)));
+  }
+
+  Card routeButton(int index, List<Map<String, dynamic>>? data) {
+    data ??= [];
+
     return Card(
       elevation: 8,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -62,13 +98,13 @@ class Notes extends StatelessWidget {
             child: const Icon(Icons.domain),
           ),
           title: Text(
-            locations[index].locationName,
+            data[index]['site_name'],
             style: const TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold),
           ),
           subtitle: Row(children: [
             Text(
-              locations[index].distance.toString(),
+              data[index]['location'],
               style: const TextStyle(color: Colors.white),
             ),
           ]),

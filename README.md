@@ -33,6 +33,18 @@ an api for managing the database
 
 ## Getting Started
 
-Once following the flutter getting started guide by [clicking here](https://docs.flutter.dev/get-started/install) we can simply run the project inside are vscode by pressing F5 or by command line with `flutter run -d <EmulatorName>` inside of the project folder.
+1. Follow the flutter getting started guide by [clicking here](https://docs.flutter.dev/get-started/install).
+
+2. Once flutter is setup copy the repository to local storage.
+
+3. Find local copy of repository and open using vscode.
+
+4. Using `cd test_app` from the vscode terminal, we will be in the root project folder.
+
+5. Run `flutter pub install` to install any packages.
+
+6. Select emulator of choice in bottom right of vscode. (Skip this step if running from terminal)
+
+7. With flutter setup and emulator chosen pressing `F5` should start the chosen emulator and flutter application. You can also run project using `flutter run -d <EmulatorName>` from the terminal.
 
 
