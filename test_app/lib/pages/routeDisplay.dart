@@ -4,6 +4,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
+import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
+import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 
 class RouteDisplay extends StatefulWidget {
   const RouteDisplay({super.key, required this.route});
@@ -17,13 +19,16 @@ class RouteDisplay extends StatefulWidget {
 class _RouteDisplayState extends State<RouteDisplay> {
   Position? _currPos;
   final mapController = MapController();
+  Polyline testPolyline = Polyline(points: [LatLng(47.491947, -117.583179), LatLng(47.658137, -117.402152)], color: Colors.purpleAccent);
+  var polyEditor;
+  List<Polyline> polyLines = [];
   void _getCurrentPos() async {
     Position position = await _determinePosition();
     setState(() {
       _currPos = position;
     });
     mapController.moveAndRotate(
-        new LatLng(position.latitude, position.longitude), 17, 0);
+        new LatLng(position.latitude, position.longitude), 15, 0);
   }
 
   /// Determine the current position of the device.
@@ -71,6 +76,14 @@ class _RouteDisplayState extends State<RouteDisplay> {
   void initState() {
     super.initState();
     _getCurrentPos();
+    polyLines.add(testPolyline);
+    polyEditor = PolyEditor(
+      points: testPolyline.points,
+      pointIcon: Icon(Icons.crop_square, size: 23),
+      intermediateIcon: Icon(Icons.lens, size: 15, color: Colors.grey),
+      callbackRefresh: () => { this.setState(() {})},
+      addClosePathMarker: false, // set to true if polygon
+    );
   }
 
   @override
@@ -95,17 +108,23 @@ class _RouteDisplayState extends State<RouteDisplay> {
       // Mapping widget
       body: FlutterMap(
         mapController: mapController,
-        options: const MapOptions(
+        options: MapOptions(
+          onTap: ( tap, ll) {
+            polyEditor.add(testPolyline.points, ll);
+            },
           initialCenter: LatLng(51.509364, -0.128928),
           initialZoom: 10,
           maxZoom: 20,
           minZoom: 1,
+
         ),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.example.app',
           ),
+          PolylineLayer(polylines: polyLines),
+          DragMarkers(markers: polyEditor.edit()),
           // Row used to display data on top of map widget
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Column(mainAxisAlignment: MainAxisAlignment.end, children: [
