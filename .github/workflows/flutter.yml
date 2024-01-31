@@ -27,5 +27,5 @@ jobs:
 
       - name: Get secrets and run Flutter command
         run: |
-          cd /flutter pub get
+          flutter pub get
           flutter build apk
