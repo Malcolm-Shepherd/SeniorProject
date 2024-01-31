@@ -22,7 +22,13 @@ jobs:
       - name: Get secrets and run Flutter command
         run: |
           cd $GITHUB_WORKSPACE/test_app
-          echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> $GITHUB_ENV
+          echo "TEST_SECRET=${{ secrets.TEST_SECRET }}" >> $GITHUB_ENV
           pwd
           flutter pub get
           flutter build apk
+      
+      - name: Debug - Print environment variables
+        run: |
+          env
+          printenv
+
