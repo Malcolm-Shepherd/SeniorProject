@@ -22,26 +22,6 @@ version: 1.0.0+1
 environment:
   sdk: '>=3.1.5 <4.0.0'
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.13.9' # replace with your desired Flutter version
-
-      - name: Get secrets
-        run: |
-          echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> $GITHUB_ENV
-          flutter pub get
-
-      - name: Build and test
-        run: flutter build apk
-
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
