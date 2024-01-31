@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - weather_integration
-      
+
 
 jobs:
   build:
@@ -19,10 +19,13 @@ jobs:
         with:
           flutter-version: '3.13.9'  # replace with your Flutter version
 
+      - name: Navigate to project directory
+        run: cd ../test_app
+      
       - name: Set up environment variables
         run: echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> $GITHUB_ENV
 
       - name: Get secrets and run Flutter command
         run: |
-          flutter pub get
+          cd /flutter pub get
           flutter build apk
