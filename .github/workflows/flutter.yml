@@ -20,11 +20,10 @@ jobs:
           flutter-version: '3.13.9'  # replace with your Flutter version
       
       - name: Set up environment variables
-        env:
-          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
-        
 
       - name: Get secrets and run Flutter command
+        env:
+            WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
         run: |
           cd $GITHUB_WORKSPACE/test_app
           pwd
