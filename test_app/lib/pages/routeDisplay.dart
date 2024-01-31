@@ -137,7 +137,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
                           ]),
                           Column(children: [
                             Text(
-                              "${widget.route.weatherType}",
+                              "testweatyher",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
