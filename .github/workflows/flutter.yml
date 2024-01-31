@@ -3,7 +3,8 @@ name: Build and Test
 on:
   push:
     branches:
-      - main
+      - weather_integration
+      
 
 jobs:
   build:
