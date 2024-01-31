@@ -20,12 +20,13 @@ jobs:
           flutter-version: '3.13.9'  # replace with your Flutter version
 
       - name: Navigate to project directory
-        run: cd $GITHUB_WORKSPACE/test_app/pag
+        run: cd $GITHUB_WORKSPACE/test_app
       
       - name: Set up environment variables
         run: echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> $GITHUB_ENV
 
       - name: Get secrets and run Flutter command
         run: |
+          pwd
           flutter pub get
           flutter build apk
