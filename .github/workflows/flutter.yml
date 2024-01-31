@@ -19,7 +19,6 @@ jobs:
         with:
           flutter-version: '3.13.9'  # replace with your Flutter version
       
-      - name: Set up environment variables
 
       - name: Get secrets and run Flutter command
         env:
