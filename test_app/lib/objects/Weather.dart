@@ -1,39 +1,6 @@
 /*
 author : Aiden Lowe
-notes : only works on android, maybe ios, idk. need to mess w/ cors
-        move api key to secrets
 */
-import 'package:http/http.dart' as http;
-import 'dart:async';
-import 'dart:convert';
-
-Future<WeatherData> fetchWeatherData(
-    String? apiKey, double lat, double lon) async {
-  final response = await http.get(
-    Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&apiKey=$apiKey'),
-    headers: {'Content-Type': 'application/json'},
-  );
-
-  print(apiKey);
-  print('Response Status Code: ${response.statusCode}');
-  print('Response Body: ${response.body}');
-
-  if (response.statusCode == 200) {
-    Map<String, dynamic> jsonResponse = json.decode(response.body);
-    WeatherData weather = WeatherData.fromJson(jsonResponse);
-
-    print('------------------------');
-
-    print('desc: ${weather.description}');
-
-    print('------------------------');
-
-    return weather;
-  } else {
-    throw Exception('Failed to load weather data');
-  }
-}
 
 class WeatherData {
   final double temperature;
@@ -87,30 +54,6 @@ class WeatherData {
   }
 }
 /*
-class _MyAppState extends State<MyApp> {
-  final TextEditingController _controller = TextEditingController();
-  Future<WeatherData>? _futureAlbum;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Create Data Example',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Create Data Example'),
-        ),
-        body: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(8),
-          child: (_futureAlbum == null) ? buildColumn() : buildFutureBuilder(),
-        ),
-      ),
-    );
-  }
-
   Column buildColumn() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -132,20 +75,17 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  FutureBuilder<WeatherData> buildFutureBuilder() {
-    return FutureBuilder<WeatherData>(
-      future: _futureAlbum,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Text(snapshot.data!.toString());
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
+---
 
-        return const CircularProgressIndicator();
-      },
-    );
-  }
-}
+weatherData =
+        fetchWeatherData("", 44.34, 10.99);
+    /*String? secretKey =
+        Platform.environment['WEATHER_API_KEY']; //this is the problem??
+    if (secretKey != null) {
+      print('GitHub secret value: $secretKey');
+      // Now you can use the secretKey in your code
+    } else {
+      print('GitHub secret not found');
+    }*/
 */
 

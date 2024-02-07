@@ -5,6 +5,10 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 
+import 'package:http/http.dart' as http;
+import 'package:test_app/objects/Weather.dart';
+import 'dart:convert';
+
 class RouteDisplay extends StatefulWidget {
   const RouteDisplay({super.key, required this.route});
 
@@ -15,12 +19,16 @@ class RouteDisplay extends StatefulWidget {
 }
 
 class _RouteDisplayState extends State<RouteDisplay> {
+  Future<WeatherData>? _currWeather;
   Position? _currPos;
   final mapController = MapController();
   void _getCurrentPos() async {
     Position position = await _determinePosition();
+    Future<WeatherData> weather =
+        fetchWeatherData("api_key", position.latitude, position.longitude);
     setState(() {
       _currPos = position;
+      _currWeather = weather;
     });
     mapController.moveAndRotate(
         new LatLng(position.latitude, position.longitude), 17, 0);
@@ -65,6 +73,46 @@ class _RouteDisplayState extends State<RouteDisplay> {
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
+  }
+
+  Future<WeatherData> fetchWeatherData(
+      String? apiKey, double lat, double lon) async {
+    final response = await http.get(
+      Uri.parse(
+          'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&apiKey=$apiKey'),
+      headers: {'Content-Type': 'application/json'},
+    );
+    print('Response Status Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      WeatherData weather = WeatherData.fromJson(jsonResponse);
+      print('------------------------');
+      print('desc: ${weather.mainWeather}');
+      print('------------------------');
+      return weather;
+    } else {
+      throw Exception('Failed to load weather data');
+    }
+  }
+
+  FutureBuilder<WeatherData> buildFutureBuilder() {
+    return FutureBuilder<WeatherData>(
+      future: _currWeather,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          WeatherData weatherData = snapshot.data!;
+          return Text(weatherData.mainWeather,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20));
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const CircularProgressIndicator();
+      },
+    );
   }
 
   @override
@@ -121,7 +169,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           // Column 1 used to display temporary data
-                          Column(children: [
+                          const Column(children: [
                             Text(
                               "21.6 mi",
                               style: TextStyle(
@@ -136,14 +184,8 @@ class _RouteDisplayState extends State<RouteDisplay> {
                                     fontSize: 10))
                           ]),
                           Column(children: [
-                            Text(
-                              "testweatyher",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                            ),
-                            Text("Weather",
+                            buildFutureBuilder(),
+                            const Text("Weather",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -152,7 +194,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
                         ],
                       ),
                       // Column 2 used to display temporary data
-                      Column(
+                      const Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Column(children: [
@@ -185,7 +227,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
                             ])
                           ]),
                       // Column 3 used to display temporary data
-                      Column(
+                      const Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Column(children: [

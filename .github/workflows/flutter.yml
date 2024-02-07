@@ -17,18 +17,14 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.9'  # replace with your Flutter version
+          flutter-version: '3.13.9'  
       
       - name: Get secrets and run Flutter command
         run: |
           cd $GITHUB_WORKSPACE/test_app
-          echo "TEST_SECRET=${{ secrets.TEST_SECRET }}" >> $GITHUB_ENV
+          echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> $GITHUB_ENV
           pwd
           flutter pub get
           flutter build apk
       
-      - name: Debug - Print environment variables
-        run: |
-          env
-          printenv
 
