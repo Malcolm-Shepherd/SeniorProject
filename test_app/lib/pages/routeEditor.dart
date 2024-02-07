@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:test_app/objects/Route.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -16,12 +18,31 @@ class RouteEditor extends StatefulWidget {
   State<RouteEditor> createState() => _RouteEditorState();
 }
 
+enum LocationLabel{
+  base('Base'),
+  a1('a1'),
+  a2('a2'),
+  b1('b1'),
+  b2('b2'),
+  b3('b3'),
+  f6('f6');
+
+  const LocationLabel(this.label);
+  final String label;
+}
+
 class _RouteEditorState extends State<RouteEditor> {
   Position? _currPos;
   final mapController = MapController();
   Polyline testPolyline = Polyline(points: [LatLng(47.491947, -117.583179), LatLng(47.658137, -117.402152)], color: Colors.purpleAccent);
   var polyEditor;
   List<Polyline> polyLines = [];
+  final TextEditingController fromController = TextEditingController();
+  final TextEditingController toController = TextEditingController();
+  LocationLabel? selectedFrom;
+  LocationLabel? selectedTo;
+
+
   void _getCurrentPos() async {
     Position position = await _determinePosition();
     setState(() {
@@ -29,6 +50,14 @@ class _RouteEditorState extends State<RouteEditor> {
     });
     mapController.moveAndRotate(
         new LatLng(position.latitude, position.longitude), 15, 0);
+  }
+
+  void saveRoute(){
+    if(selectedTo != null && selectedTo != null) {
+      String path = selectedFrom!.label + "_" + selectedTo!.label + ".txt";
+      //File newRoute = new File(path);
+      print(testPolyline.points.toString());
+    }
   }
 
   /// Determine the current position of the device.
@@ -72,6 +101,8 @@ class _RouteEditorState extends State<RouteEditor> {
     return await Geolocator.getCurrentPosition();
   }
 
+
+
   @override
   void initState() {
     super.initState();
@@ -84,6 +115,7 @@ class _RouteEditorState extends State<RouteEditor> {
       callbackRefresh: () => { this.setState(() {})},
       addClosePathMarker: false, // set to true if polygon
     );
+
   }
 
   @override
@@ -94,11 +126,61 @@ class _RouteEditorState extends State<RouteEditor> {
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         backgroundColor: Colors.grey[900],
-        title: Text(
-          widget.route.routeName,
-          style: const TextStyle(color: Colors.white),
-        ),
+        // title: Text(
+        //   widget.route.routeName,
+        //   style: const TextStyle(color: Colors.white),
+        // ),
         actions: [
+          DropdownMenu<LocationLabel>(
+            controller: fromController,
+            enableFilter: true,
+            requestFocusOnTap: true,
+            label: const Text("From", selectionColor: Colors.white),
+            textStyle: const TextStyle(
+              color: Colors.white
+            ),
+            onSelected: (LocationLabel? location){
+              setState(() {
+                selectedFrom = location;
+              });
+            },
+            dropdownMenuEntries:
+            LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
+                (LocationLabel location) {
+                  return DropdownMenuEntry<LocationLabel>(
+                    value: location,
+                    label: location.label
+                  );
+                },
+            ).toList(),
+          ),
+          DropdownMenu<LocationLabel>(
+            controller: toController,
+            enableFilter: true,
+            requestFocusOnTap: true,
+            label: const Text("From", selectionColor: Colors.white),
+            textStyle: const TextStyle(
+                color: Colors.white
+            ),
+            onSelected: (LocationLabel? location){
+              setState(() {
+                selectedTo = location;
+              });
+            },
+            dropdownMenuEntries:
+            LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
+                  (LocationLabel location) {
+                return DropdownMenuEntry<LocationLabel>(
+                    value: location,
+                    label: location.label
+                );
+              },
+            ).toList(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.add_box_rounded),
+            onPressed: saveRoute,
+          ),
           IconButton(
             icon: const Icon(Icons.list),
             onPressed: _getCurrentPos,
