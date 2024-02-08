@@ -75,7 +75,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
   @override
   void initState() {
     super.initState();
-    _getCurrentPos();
+    //_getCurrentPos();
     polyLines.add(testPolyline);
     polyEditor = PolyEditor(
       points: testPolyline.points,
@@ -112,7 +112,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
           onTap: ( tap, ll) {
             polyEditor.add(testPolyline.points, ll);
             },
-          initialCenter: LatLng(51.509364, -0.128928),
+          initialCenter: LatLng(47.501360, -111.193718),
           initialZoom: 10,
           maxZoom: 20,
           minZoom: 1,

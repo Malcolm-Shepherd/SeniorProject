@@ -67,6 +67,7 @@ flutter:
      - images/test0.png
      - images/test1.png
      - images/test2.png
+     - assets/routes/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

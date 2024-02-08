@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:test_app/objects/Route.dart';
@@ -54,10 +56,43 @@ class _RouteEditorState extends State<RouteEditor> {
 
   void saveRoute(){
     if(selectedTo != null && selectedTo != null) {
-      String path = selectedFrom!.label + "_" + selectedTo!.label + ".txt";
+      String path = "${selectedFrom!.label}_${selectedTo!.label}.txt";
       //File newRoute = new File(path);
-      print(testPolyline.points.toString());
+      for(var point in testPolyline.points){
+        print("${point.latitude},${point.longitude};");
+      }
     }
+  }
+
+  void loadRoute(String from, String to)async {
+    String path = "${from}_${to}.txt";
+    List<LatLng> points = [];
+    var assests = DefaultAssetBundle.of(context);
+    var input = await assests.loadString('assets/routes/base_a1.txt');
+    var pointString = input.split(";");
+
+    for(var p in pointString){
+      var l = p.split(',');
+
+      if(l.length > 1) {
+        print("${l[0]}, ${l[1]}");
+        LatLng point = LatLng(double.parse(l[0]), double.parse(l[1]));
+        points.add(point);
+      }
+    }
+
+    setState(() {
+      testPolyline = Polyline(points: points, color: Colors.purpleAccent);
+      polyLines.add(testPolyline);
+      polyEditor = PolyEditor(
+        points: testPolyline.points,
+        pointIcon: Icon(Icons.crop_square, size: 23),
+        intermediateIcon: Icon(Icons.lens, size: 15, color: Colors.grey),
+        callbackRefresh: () => { this.setState(() {})},
+        addClosePathMarker: false, // set to true if polygon
+      );
+    });
+
   }
 
   /// Determine the current position of the device.
@@ -106,15 +141,8 @@ class _RouteEditorState extends State<RouteEditor> {
   @override
   void initState() {
     super.initState();
-    _getCurrentPos();
-    polyLines.add(testPolyline);
-    polyEditor = PolyEditor(
-      points: testPolyline.points,
-      pointIcon: Icon(Icons.crop_square, size: 23),
-      intermediateIcon: Icon(Icons.lens, size: 15, color: Colors.grey),
-      callbackRefresh: () => { this.setState(() {})},
-      addClosePathMarker: false, // set to true if polygon
-    );
+    loadRoute("base", "a1");
+
 
   }
 
@@ -194,7 +222,7 @@ class _RouteEditorState extends State<RouteEditor> {
           onTap: ( tap, ll) {
             polyEditor.add(testPolyline.points, ll);
             },
-          initialCenter: LatLng(51.509364, -0.128928),
+          initialCenter: LatLng(47.501360, -111.193718),
           initialZoom: 10,
           maxZoom: 20,
           minZoom: 1,
