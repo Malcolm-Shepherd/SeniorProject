@@ -3,16 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:test_app/objects/Location.dart';
-import 'package:test_app/pages/noteDisplay.dart';
+import 'package:test_app/pages/noteListDisplay.dart';
 
-final List<LocationInfo> locations = <LocationInfo>[
-  LocationInfo('Some Location', 1),
-  LocationInfo('This Location', 2),
-  LocationInfo('This Location', 3),
-  LocationInfo('This Location', 4),
-  LocationInfo('This Location', 5)
-];
-
+// function to load json mock data into page
 Future<List<Map<String, dynamic>>> loadMockData() async {
   // Get the json data from MOCK_SITE_LOCATION.json
   String jsonStr =
@@ -32,6 +25,7 @@ class Notes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[500],
+      // Location page app bar
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
@@ -47,13 +41,15 @@ class Notes extends StatelessWidget {
           )
         ],
       ),
+      // FutureBuilder in order to load mock json data into widget
       body: FutureBuilder(
         future: loadMockData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot == null) {
-              return Text("null data");
+              return Text("Error null data");
             } else if (snapshot.data != null) {
+              // Create list with the data pulled from loadMockData()
               return ListViewBuilder(snapshot.data);
             }
           } else {
@@ -72,14 +68,20 @@ class Notes extends StatelessWidget {
     return ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) => GestureDetector(
+            // onTap to create a page of notes when locationButton created below is pressed
             onTap: () => {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => NotesDisplay()))
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              // NotesDisplay will take a id param to only fetch notes from selected site
+                              NotesDisplay(id: data?[index]['site_id'])))
                 },
-            child: routeButton(index, data)));
+            child: locationButton(index, data)));
   }
 
-  Card routeButton(int index, List<Map<String, dynamic>>? data) {
+  // Button to display different locations/jobsites in a list format.
+  Card locationButton(int index, List<Map<String, dynamic>>? data) {
     data ??= [];
 
     return Card(

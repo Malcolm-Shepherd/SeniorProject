@@ -1,7 +1,33 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class NotesDisplay extends StatelessWidget {
-  const NotesDisplay({super.key});
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:test_app/objects/Location.dart';
+
+final List<LocationInfo> locations = <LocationInfo>[
+  LocationInfo('Some Location', 1),
+  LocationInfo('This Location', 2),
+  LocationInfo('This Location', 3),
+  LocationInfo('This Location', 4),
+  LocationInfo('This Location', 5)
+];
+
+Future<List<Map<String, dynamic>>> loadMockData() async {
+  // Get the json data from MOCK_SITE_LOCATION.json
+  String jsonStr = await rootBundle.loadString('mock_data/MOCK_NOTE.json');
+  //
+  List<dynamic> jsonList = json.decode(jsonStr);
+  //
+  return jsonList.cast<Map<String, dynamic>>();
+}
+
+List<Map<String, dynamic>> dataList = [];
+
+class NoteDisplay extends StatelessWidget {
+  final Map<String, dynamic> note;
+  final int id;
+  const NoteDisplay({Key? key, required this.id, required this.note})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -11,54 +37,97 @@ class NotesDisplay extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         backgroundColor: Colors.grey[900],
-        title: const Text(
-          "locations Menu",
+        title: Text(
+          note['title'],
           style: TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => showDialog(
-                context: context,
-                builder: (BuildContext context) => noteDialog(context)),
+            icon: const Icon(Icons.list),
+            onPressed: () {},
           )
         ],
       ),
-      body: Container(),
+      body: noteCard(note),
     );
   }
-}
 
-Dialog noteDialog(BuildContext context) {
-  return Dialog(
-    child: Padding(
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text("data"),
-          TextFormField(
-            decoration: const InputDecoration(
-                border: UnderlineInputBorder(), labelText: 'Note title'),
-          ),
-          TextFormField(
-            decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Note body',
-                isDense: true,
-                alignLabelWithHint: false),
-            maxLines: null,
-          ),
-          const SizedBox(height: 15),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Close'),
-          ),
-        ],
+  Widget noteCard(Map<String, dynamic> data) {
+    return Expanded(
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 4000),
+        margin: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(15.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[900],
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  "Note Title:",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            ),
+            Text(
+              note['title'].toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(
+              color: Colors.white,
+              thickness: 1,
+            ),
+            const Row(
+              children: [
+                Text(
+                  "\nPriority: ",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            ),
+            Text(
+              note['priority'].toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(
+              color: Colors.white,
+              thickness: 1,
+            ),
+            const Text("\nNote Contents: ",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                )),
+            Text(
+              note['content'],
+              style: const TextStyle(color: Colors.white),
+            ),
+            const Divider(
+              color: Colors.white,
+              thickness: 1,
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
