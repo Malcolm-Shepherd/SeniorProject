@@ -10,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
+import 'package:path_provider/path_provider.dart';
 
 class RouteEditor extends StatefulWidget {
   const RouteEditor({super.key, required this.route});
@@ -21,7 +22,7 @@ class RouteEditor extends StatefulWidget {
 }
 
 enum LocationLabel{
-  base('Base'),
+  base('base'),
   a1('a1'),
   a2('a2'),
   b1('b1'),
@@ -54,28 +55,35 @@ class _RouteEditorState extends State<RouteEditor> {
         new LatLng(position.latitude, position.longitude), 15, 0);
   }
 
-  void saveRoute(){
+  void saveRoute()async{
     if(selectedTo != null && selectedTo != null) {
-      String path = "${selectedFrom!.label}_${selectedTo!.label}.txt";
-      //File newRoute = new File(path);
-      for(var point in testPolyline.points){
-        print("${point.latitude},${point.longitude};");
+      final directory = await getApplicationDocumentsDirectory();
+      String path = "${directory.path}/${selectedFrom!.label}_${selectedTo!.label}.txt";
+      File output = File(path);
+      if(!(await output.exists())){
+        await output.create();
       }
+      String points = "";
+      for(var point in testPolyline.points){
+        points = "${points}${point.latitude},${point.longitude};";
+        //output.writeAsString("${point.latitude},${point.longitude};");
+      }
+      output.writeAsString(points);
     }
   }
 
   void loadRoute(String from, String to)async {
-    String path = "${from}_${to}.txt";
+    final directory = await getApplicationDocumentsDirectory();
+    String path = "${directory.path}/${from}_${to}.txt";
+    File input = File(path);
     List<LatLng> points = [];
-    var assests = DefaultAssetBundle.of(context);
-    var input = await assests.loadString('assets/routes/base_a1.txt');
-    var pointString = input.split(";");
+    var inputString = await input.readAsString();
+    var pointString = inputString.split(";");
 
     for(var p in pointString){
       var l = p.split(',');
 
       if(l.length > 1) {
-        print("${l[0]}, ${l[1]}");
         LatLng point = LatLng(double.parse(l[0]), double.parse(l[1]));
         points.add(point);
       }
@@ -143,7 +151,9 @@ class _RouteEditorState extends State<RouteEditor> {
     super.initState();
     loadRoute("base", "a1");
 
+    setState(() {
 
+    });
   }
 
   @override
