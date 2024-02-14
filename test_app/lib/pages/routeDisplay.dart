@@ -82,14 +82,14 @@ class _RouteDisplayState extends State<RouteDisplay> {
           'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&apiKey=$apiKey'),
       headers: {'Content-Type': 'application/json'},
     );
-    print('Response Status Code: ${response.statusCode}');
-    print('Response Body: ${response.body}');
+    //print('Response Status Code: ${response.statusCode}');
+    //print('Response Body: ${response.body}');
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = json.decode(response.body);
       WeatherData weather = WeatherData.fromJson(jsonResponse);
-      print('------------------------');
-      print('desc: ${weather.mainWeather}');
-      print('------------------------');
+      //print('------------------------');
+      //print('desc: ${weather.mainWeather}');
+      //print('------------------------');
       return weather;
     } else {
       throw Exception('Failed to load weather data');
