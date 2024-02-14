@@ -33,6 +33,6 @@ an api for managing the database
 
 ## Getting Started
 
-Once following the flutter getting started guide by [clicking here](https://docs.flutter.dev/get-started/install) we can simply run the project inside are vscode by pressing F5 or by command line with `flutter run -d <EmulatorName>` inside of the project folder.
+The weather won't work without the api key, once you have it, I recommend you make a file named secret.txt in the lib folder and keep a copy of the key in there. The file secret.txt is added to the .gitignore so it won't be pushed to github, but you will have to clear the key from any other places before a push(the routeDisplay file). 
 
 

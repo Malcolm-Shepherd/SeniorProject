@@ -24,8 +24,10 @@ class _RouteDisplayState extends State<RouteDisplay> {
   final mapController = MapController();
   void _getCurrentPos() async {
     Position position = await _determinePosition();
-    Future<WeatherData> weather =
-        fetchWeatherData("api_key", position.latitude, position.longitude);
+    Future<WeatherData> weather = fetchWeatherData(
+        "9e922ed7ba5726c0f091adead1a27c86",
+        position.latitude,
+        position.longitude);
     setState(() {
       _currPos = position;
       _currWeather = weather;
@@ -79,11 +81,11 @@ class _RouteDisplayState extends State<RouteDisplay> {
       String? apiKey, double lat, double lon) async {
     final response = await http.get(
       Uri.parse(
-          'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&apiKey=$apiKey'),
+          'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&apiKey=$apiKey&units=imperial'),
       headers: {'Content-Type': 'application/json'},
     );
     //print('Response Status Code: ${response.statusCode}');
-    //print('Response Body: ${response.body}');
+    print('Response Body: ${response.body}');
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = json.decode(response.body);
       WeatherData weather = WeatherData.fromJson(jsonResponse);
@@ -103,6 +105,25 @@ class _RouteDisplayState extends State<RouteDisplay> {
         if (snapshot.hasData) {
           WeatherData weatherData = snapshot.data!;
           return Text(weatherData.mainWeather,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20));
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+
+  FutureBuilder<WeatherData> buildFutureBuilder2() {
+    return FutureBuilder<WeatherData>(
+      future: _currWeather,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          WeatherData weatherData = snapshot.data!;
+          return Text("${weatherData.temperature} F",
               style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -194,24 +215,18 @@ class _RouteDisplayState extends State<RouteDisplay> {
                         ],
                       ),
                       // Column 2 used to display temporary data
-                      const Column(
+                      Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Column(children: [
-                              Text(
-                                "76.8",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20),
-                              ),
-                              Text("Tempature",
+                              buildFutureBuilder2(),
+                              const Text("Tempature",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 10))
                             ]),
-                            Column(children: [
+                            const Column(children: [
                               Text(
                                 "Bad",
                                 style: TextStyle(
