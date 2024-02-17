@@ -35,47 +35,61 @@ class NewNoteState extends State<NewNote> {
           style: TextStyle(color: Colors.white),
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            child: TextField(
-              controller: titleController,
-              decoration: InputDecoration(
-                labelText: 'Enter Note Title',
+      body: Container(
+        constraints: const BoxConstraints(minWidth: 4000, maxHeight: 500),
+        margin: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(15.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[900],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(0, 40, 0, 60),
+              child: TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Enter Note Title',
+                ),
+                style: TextStyle(color: Colors.white),
               ),
             ),
-          ),
-          Container(
-            child: TextField(
-              controller: contentController,
-              decoration: InputDecoration(
-                labelText: 'Enter Note Title',
+            Container(
+              child: TextField(
+                controller: contentController,
+                decoration: const InputDecoration(
+                  labelText: 'Enter Note Title',
+                ),
+                style: TextStyle(color: Colors.white),
               ),
             ),
-          ),
-          Text(
-            titleController
-                .text, // Use titleController.text to display the entered text
-            style: TextStyle(color: Colors.white),
-          ),
-          TextButton(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+            Text(
+              titleController
+                  .text, // Use titleController.text to display the entered text
+              style: TextStyle(color: Colors.white),
             ),
-            onPressed: () {
-              Map<String, dynamic> data = {
-                'note_id': '1',
-                'site_id': '1',
-                'priority': '1',
-                'title': titleController.text,
-                'content': contentController.text,
-              };
-              print(data);
-              writeToJSON(data, 'test_app/mock_data/MOCK_NOTE.json');
-            },
-            child: Text('TextButton'),
-          )
-        ],
+            TextButton(
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              ),
+              onPressed: () {
+                Map<String, dynamic> data = {
+                  'note_id': '1',
+                  'site_id': '1',
+                  'priority': '1',
+                  'title': titleController.text,
+                  'content': contentController.text,
+                };
+                print(data);
+                writeToJSON(data, "\\test_app\\mock_data\\MOCK_NOTE.json");
+              },
+              child: const Text(
+                'Submit',
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -83,7 +83,7 @@ class NotesDisplay extends StatelessWidget {
                           NoteDisplay(id: id, note: data![index])),
                 );
               },
-              child: routeButton(index, data),
+              child: noteCard(data[index]),
             );
           } else {
             // If the ID doesn't match, return null
@@ -130,6 +130,85 @@ class NotesDisplay extends StatelessWidget {
             color: Colors.white,
             size: 30,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget noteCard(Map<String, dynamic> data) {
+    return Expanded(
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 4000),
+        margin: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(15.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[900],
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  "Note Title:",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            ),
+            Text(
+              data['title'].toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(
+              color: Colors.white,
+              thickness: 1,
+            ),
+            const Row(
+              children: [
+                Text(
+                  "\nPriority: ",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            ),
+            Text(
+              data['priority'].toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(
+              color: Colors.white,
+              thickness: 1,
+            ),
+            const Text("\nNote Contents: ",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                )),
+            Text(
+              data['content'],
+              style: const TextStyle(color: Colors.white),
+            ),
+            const Divider(
+              color: Colors.white,
+              thickness: 1,
+            ),
+          ],
         ),
       ),
     );
