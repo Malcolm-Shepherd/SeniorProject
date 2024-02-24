@@ -39,6 +39,7 @@ dependencies:
   flutter_map_cancellable_tile_provider: ^1.0.0
   geolocator: ^10.1.0
   table_calendar: ^3.1.0
+  syncfusion_flutter_calendar: ^24.2.7
 
 
 dev_dependencies:

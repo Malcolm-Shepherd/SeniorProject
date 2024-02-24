@@ -5,15 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:test_app/pages/login.dart';
 import 'package:test_app/pages/driver.dart';
 import 'package:test_app/pages/locListDispay.dart';
+import 'package:test_app/pages/taskHandling.dart';
 import 'package:test_app/pages/tasks.dart';
-
-Future<void> loadMockData() async {
-  String jsonStr = await rootBundle.loadString('MOCK_SITE_LOCATION.json');
-
-  List<dynamic> jsonList = json.decode(jsonStr);
-
-  dataList = jsonList.cast<Map<String, dynamic>>();
-}
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +25,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoginPage(),
         '/driver': (context) => const Driver(),
         '/notes': (context) => const Notes(),
-        '/tasks': (context) => const Tasks()
+        '/tasks': (context) => const Tasks(),
+        '/schedule': (context) => const TaskHandling()
       },
     );
   }
