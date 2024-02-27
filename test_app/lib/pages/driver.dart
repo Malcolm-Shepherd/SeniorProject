@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/objects/Route.dart';
 import 'package:test_app/pages/routeDisplay.dart';
+import 'package:test_app/pages/routeEditor.dart';
+import 'package:test_app/pages/labels.dart';
+
 
 final List<String> approvedRoutes = <String>['Route A', 'Route B', 'Route  C'];
 final List<RouteInfo> routes = <RouteInfo>[
@@ -23,6 +26,10 @@ final List<RouteInfo> routes = <RouteInfo>[
 ];
 
 class Driver extends StatelessWidget {
+  static final TextEditingController fromController = TextEditingController();
+  static final TextEditingController toController = TextEditingController();
+  static LocationLabel? selectedFrom;
+  static LocationLabel? selectedTo;
   const Driver({super.key});
 
   @override
@@ -44,17 +51,87 @@ class Driver extends StatelessWidget {
           )
         ],
       ),
-      body: ListView.builder(
-          itemCount: routes.length,
-          itemBuilder: (context, index) => GestureDetector(
-              onTap: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                RouteDisplay(route: routes[index])))
-                  },
-              child: routeButton(index))),
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 400,
+              height: 500,
+              margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              child: Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text(
+                        "Please select\n a route below:",
+                        style: TextStyle(
+                            fontSize: 35,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [DropdownMenu<LocationLabel>(
+                          controller: fromController,
+                          label: const Text("From", selectionColor: Colors.black),
+                          textStyle: const TextStyle(
+                              color: Colors.white
+                          ),
+                          onSelected: (LocationLabel? location){
+                            selectedFrom = location;
+                          },
+                          dropdownMenuEntries:
+                          LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
+                                (LocationLabel location) {
+                              return DropdownMenuEntry<LocationLabel>(
+                                  value: location,
+                                  label: location.label
+                              );
+                            },
+                          ).toList(),
+                        ),
+                          DropdownMenu<LocationLabel>(
+                            controller: toController,
+                            label: const Text("To", selectionColor: Colors.black),
+                            textStyle: const TextStyle(
+                                color: Colors.white
+                            ),
+                            onSelected: (LocationLabel? location){
+                              selectedTo = location;
+                            },
+                            dropdownMenuEntries:
+                            LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
+                                  (LocationLabel location) {
+                                return DropdownMenuEntry<LocationLabel>(
+                                    value: location,
+                                    label: location.label
+                                );
+                              },
+                            ).toList(),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add_box_outlined),
+                            onPressed:() => {
+                              if(selectedFrom != null && selectedTo != null){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            RouteDisplay(route: RouteInfo("route", "weater", selectedFrom!.label,  selectedTo!.label))))
+                              }
+                            },
+                          ),],
+                      ),
+                    ]),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

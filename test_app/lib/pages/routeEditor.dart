@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:test_app/objects/Route.dart';
+import 'package:test_app/pages/labels.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
@@ -21,18 +22,7 @@ class RouteEditor extends StatefulWidget {
   State<RouteEditor> createState() => _RouteEditorState();
 }
 
-enum LocationLabel{
-  base('base'),
-  a1('a1'),
-  a2('a2'),
-  b1('b1'),
-  b2('b2'),
-  b3('b3'),
-  f6('f6');
 
-  const LocationLabel(this.label);
-  final String label;
-}
 
 class _RouteEditorState extends State<RouteEditor> {
   Position? _currPos;
@@ -44,6 +34,7 @@ class _RouteEditorState extends State<RouteEditor> {
   final TextEditingController toController = TextEditingController();
   LocationLabel? selectedFrom;
   LocationLabel? selectedTo;
+
 
 
   void _getCurrentPos() async {
@@ -76,6 +67,9 @@ class _RouteEditorState extends State<RouteEditor> {
     final directory = await getApplicationDocumentsDirectory();
     String path = "${directory.path}/${from}_${to}.txt";
     File input = File(path);
+    if(!(await input.exists())){
+      await input.create();
+    }
     List<LatLng> points = [];
     var inputString = await input.readAsString();
     var pointString = inputString.split(";");
@@ -149,7 +143,7 @@ class _RouteEditorState extends State<RouteEditor> {
   @override
   void initState() {
     super.initState();
-    loadRoute("base", "a1");
+    loadRoute(this.widget.route.fromLocation, this.widget.route.toLocation);
 
     setState(() {
 

@@ -1,11 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:test_app/objects/Route.dart';
+import 'package:test_app/pages/labels.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
+import 'package:path_provider/path_provider.dart';
 
 class RouteDisplay extends StatefulWidget {
   const RouteDisplay({super.key, required this.route});
@@ -72,18 +78,45 @@ class _RouteDisplayState extends State<RouteDisplay> {
     return await Geolocator.getCurrentPosition();
   }
 
+  void loadRoute(String from, String to)async {
+    final directory = await getApplicationDocumentsDirectory();
+    String path = "${directory.path}/${from}_${to}.txt";
+    File input = File(path);
+    if(!(await input.exists())){
+      await input.create();
+    }
+    List<LatLng> points = [];
+    var inputString = await input.readAsString();
+    var pointString = inputString.split(";");
+
+    for(var p in pointString){
+      var l = p.split(',');
+
+      if(l.length > 1) {
+        LatLng point = LatLng(double.parse(l[0]), double.parse(l[1]));
+        points.add(point);
+      }
+    }
+
+    setState(() {
+      testPolyline = Polyline(points: points, color: Colors.purpleAccent);
+      polyLines.add(testPolyline);
+      polyEditor = PolyEditor(
+        points: testPolyline.points,
+        pointIcon: Icon(Icons.crop_square, size: 23),
+        intermediateIcon: Icon(Icons.lens, size: 15, color: Colors.grey),
+        callbackRefresh: () => { this.setState(() {})},
+        addClosePathMarker: false, // set to true if polygon
+      );
+    });
+
+  }
+
   @override
   void initState() {
     super.initState();
     //_getCurrentPos();
-    polyLines.add(testPolyline);
-    polyEditor = PolyEditor(
-      points: testPolyline.points,
-      pointIcon: Icon(Icons.crop_square, size: 23),
-      intermediateIcon: Icon(Icons.lens, size: 15, color: Colors.grey),
-      callbackRefresh: () => { this.setState(() {})},
-      addClosePathMarker: false, // set to true if polygon
-    );
+    loadRoute(this.widget.route.fromLocation, this.widget.route.toLocation);
   }
 
   @override
@@ -109,9 +142,6 @@ class _RouteDisplayState extends State<RouteDisplay> {
       body: FlutterMap(
         mapController: mapController,
         options: MapOptions(
-          onTap: ( tap, ll) {
-            polyEditor.add(testPolyline.points, ll);
-            },
           initialCenter: LatLng(47.501360, -111.193718),
           initialZoom: 10,
           maxZoom: 20,
@@ -124,7 +154,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
             userAgentPackageName: 'com.example.app',
           ),
           PolylineLayer(polylines: polyLines),
-          DragMarkers(markers: polyEditor.edit()),
+          //DragMarkers(markers: polyEditor.edit()),
           // Row used to display data on top of map widget
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Column(mainAxisAlignment: MainAxisAlignment.end, children: [
