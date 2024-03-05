@@ -12,6 +12,7 @@ import 'dart:async';
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
 class RouteEditor extends StatefulWidget {
   const RouteEditor({super.key, required this.route});
@@ -157,7 +158,7 @@ class _RouteEditorState extends State<RouteEditor> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Colors.grey[350],
         // title: Text(
         //   widget.route.routeName,
         //   style: const TextStyle(color: Colors.white),
@@ -165,11 +166,9 @@ class _RouteEditorState extends State<RouteEditor> {
         actions: [
           DropdownMenu<LocationLabel>(
             controller: fromController,
-            enableFilter: true,
-            requestFocusOnTap: true,
             label: const Text("From", selectionColor: Colors.white),
             textStyle: const TextStyle(
-              color: Colors.white
+              color: Colors.black
             ),
             onSelected: (LocationLabel? location){
               setState(() {
@@ -188,11 +187,9 @@ class _RouteEditorState extends State<RouteEditor> {
           ),
           DropdownMenu<LocationLabel>(
             controller: toController,
-            enableFilter: true,
-            requestFocusOnTap: true,
-            label: const Text("From", selectionColor: Colors.white),
+            label: const Text("To", selectionColor: Colors.white),
             textStyle: const TextStyle(
-                color: Colors.white
+                color: Colors.black
             ),
             onSelected: (LocationLabel? location){
               setState(() {
@@ -236,6 +233,20 @@ class _RouteEditorState extends State<RouteEditor> {
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.example.app',
+          ),
+          CurrentLocationLayer(
+            alignPositionOnUpdate: AlignOnUpdate.never,
+            alignDirectionOnUpdate: AlignOnUpdate.never,
+            style: LocationMarkerStyle(
+              marker: const DefaultLocationMarker(
+                child: Icon(
+                  Icons.navigation,
+                  color: Colors.white,
+                ),
+              ),
+              markerSize: const Size(40, 40),
+              markerDirection: MarkerDirection.heading,
+            ),
           ),
           PolylineLayer(polylines: polyLines),
           DragMarkers(markers: polyEditor.edit()),

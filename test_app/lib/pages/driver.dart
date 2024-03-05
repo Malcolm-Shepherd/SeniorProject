@@ -79,7 +79,7 @@ class Driver extends StatelessWidget {
                           controller: fromController,
                           label: const Text("From", selectionColor: Colors.black),
                           textStyle: const TextStyle(
-                              color: Colors.white
+                              color: Colors.black
                           ),
                           onSelected: (LocationLabel? location){
                             selectedFrom = location;
@@ -98,7 +98,7 @@ class Driver extends StatelessWidget {
                             controller: toController,
                             label: const Text("To", selectionColor: Colors.black),
                             textStyle: const TextStyle(
-                                color: Colors.white
+                                color: Colors.black
                             ),
                             onSelected: (LocationLabel? location){
                               selectedTo = location;

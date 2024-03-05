@@ -12,6 +12,7 @@ import 'dart:async';
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
 class RouteDisplay extends StatefulWidget {
   const RouteDisplay({super.key, required this.route});
@@ -152,6 +153,20 @@ class _RouteDisplayState extends State<RouteDisplay> {
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.example.app',
+          ),
+          CurrentLocationLayer(
+            alignPositionOnUpdate: AlignOnUpdate.always,
+            alignDirectionOnUpdate: AlignOnUpdate.always,
+            style: LocationMarkerStyle(
+              marker: const DefaultLocationMarker(
+                child: Icon(
+                  Icons.navigation,
+                  color: Colors.white,
+                ),
+              ),
+              markerSize: const Size(40, 40),
+              markerDirection: MarkerDirection.heading,
+            ),
           ),
           PolylineLayer(polylines: polyLines),
           //DragMarkers(markers: polyEditor.edit()),
