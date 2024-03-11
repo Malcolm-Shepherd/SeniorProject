@@ -4,33 +4,34 @@ import 'package:test_app/pages/routeDisplay.dart';
 import 'package:test_app/pages/routeEditor.dart';
 import 'package:test_app/pages/labels.dart';
 
-
 final List<String> approvedRoutes = <String>['Route A', 'Route B', 'Route  C'];
 final List<RouteInfo> routes = <RouteInfo>[
   RouteInfo('Some Route', 'Sunny', 'Location 1', 'Location 2'),
-  RouteInfo('This Route', 'Rainy', 'Location 2', 'Location 3'),
-  RouteInfo('This Route', 'Rainy', 'Location 3', 'Location 4'),
-  RouteInfo('This Route', 'Rainy', 'Location 4', 'Location 5'),
-  RouteInfo('This Route', 'Rainy', 'Location 5', 'Location 6'),
-  RouteInfo('This Route', 'Rainy', 'Location 6', 'Location 7'),
-  RouteInfo('This Route', 'Rainy', 'Location 7', 'Location 8'),
-  RouteInfo('This Route', 'Rainy', 'Location 8', 'Location 9'),
-  RouteInfo('Some Route', 'Sunny', 'Location 1', 'Location 2'),
-  RouteInfo('This Route', 'Rainy', 'Location 2', 'Location 3'),
-  RouteInfo('This Route', 'Rainy', 'Location 3', 'Location 4'),
-  RouteInfo('This Route', 'Rainy', 'Location 4', 'Location 5'),
-  RouteInfo('This Route', 'Rainy', 'Location 5', 'Location 6'),
-  RouteInfo('This Route', 'Rainy', 'Location 6', 'Location 7'),
-  RouteInfo('This Route', 'Rainy', 'Location 7', 'Location 8'),
-  RouteInfo('This Route', 'Rainy', 'Location 8', 'Location 9')
+  RouteInfo('This Route', 'Rainy', 'Location 2', 'Location 3')
+  // RouteInfo('This Route', 'Rainy', 'Location 3', 'Location 4'),
+  // RouteInfo('This Route', 'Rainy', 'Location 4', 'Location 5'),
+  // RouteInfo('This Route', 'Rainy', 'Location 5', 'Location 6'),
+  // RouteInfo('This Route', 'Rainy', 'Location 6', 'Location 7'),
+  // RouteInfo('This Route', 'Rainy', 'Location 7', 'Location 8'),
+  // RouteInfo('This Route', 'Rainy', 'Location 8', 'Location 9'),
+  // RouteInfo('Some Route', 'Sunny', 'Location 1', 'Location 2'),
+  // RouteInfo('This Route', 'Rainy', 'Location 2', 'Location 3'),
+  // RouteInfo('This Route', 'Rainy', 'Location 3', 'Location 4'),
+  // RouteInfo('This Route', 'Rainy', 'Location 4', 'Location 5'),
+  // RouteInfo('This Route', 'Rainy', 'Location 5', 'Location 6'),
+  // RouteInfo('This Route', 'Rainy', 'Location 6', 'Location 7'),
+  // RouteInfo('This Route', 'Rainy', 'Location 7', 'Location 8'),
+  // RouteInfo('This Route', 'Rainy', 'Location 8', 'Location 9')
 ];
 
-class Driver extends StatelessWidget {
+class Editor extends StatelessWidget {
   static final TextEditingController fromController = TextEditingController();
   static final TextEditingController toController = TextEditingController();
   static LocationLabel? selectedFrom;
   static LocationLabel? selectedTo;
-  const Driver({super.key});
+  const Editor({super.key});
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +54,7 @@ class Driver extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
@@ -121,7 +122,7 @@ class Driver extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            RouteDisplay(route: RouteInfo("route", "weater", selectedFrom!.label,  selectedTo!.label))))
+                                            RouteEditor(route: RouteInfo("route", "weater", selectedFrom!.label,  selectedTo!.label))))
                               }
                             },
                           ),],
