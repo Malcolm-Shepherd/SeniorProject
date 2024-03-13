@@ -14,6 +14,10 @@ import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
+import 'package:http/http.dart' as http;
+import 'package:test_app/objects/Weather.dart';
+import 'dart:convert';
+
 class RouteDisplay extends StatefulWidget {
   const RouteDisplay({super.key, required this.route});
 
@@ -24,6 +28,7 @@ class RouteDisplay extends StatefulWidget {
 }
 
 class _RouteDisplayState extends State<RouteDisplay> {
+  Future<WeatherData>? _currWeather;
   Position? _currPos;
   final mapController = MapController();
   Polyline testPolyline = Polyline(points: [LatLng(47.491947, -117.583179), LatLng(47.658137, -117.402152)], color: Colors.purpleAccent);
@@ -31,8 +36,11 @@ class _RouteDisplayState extends State<RouteDisplay> {
   List<Polyline> polyLines = [];
   void _getCurrentPos() async {
     Position position = await _determinePosition();
+    Future<WeatherData> weather =
+        fetchWeatherData("api-key", position.latitude, position.longitude);
     setState(() {
       _currPos = position;
+      _currWeather = weather;
     });
     mapController.moveAndRotate(
         new LatLng(position.latitude, position.longitude), 15, 0);
@@ -79,6 +87,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
     return await Geolocator.getCurrentPosition();
   }
 
+
   void loadRoute(String from, String to)async {
     final directory = await getApplicationDocumentsDirectory();
     String path = "${directory.path}/${from}_${to}.txt";
@@ -110,6 +119,65 @@ class _RouteDisplayState extends State<RouteDisplay> {
         addClosePathMarker: false, // set to true if polygon
       );
     });
+
+
+  Future<WeatherData> fetchWeatherData(
+      String? apiKey, double lat, double lon) async {
+    final response = await http.get(
+      Uri.parse(
+          'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&apiKey=$apiKey&units=imperial'),
+      headers: {'Content-Type': 'application/json'},
+    );
+    //print('Response Status Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      WeatherData weather = WeatherData.fromJson(jsonResponse);
+      //print('------------------------');
+      //print('desc: ${weather.mainWeather}');
+      //print('------------------------');
+      return weather;
+    } else {
+      throw Exception('Failed to load weather data');
+    }
+  }
+
+  FutureBuilder<WeatherData> buildFutureBuilder() {
+    return FutureBuilder<WeatherData>(
+      future: _currWeather,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          WeatherData weatherData = snapshot.data!;
+          return Text(weatherData.mainWeather,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20));
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+
+  FutureBuilder<WeatherData> buildFutureBuilder2() {
+    return FutureBuilder<WeatherData>(
+      future: _currWeather,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          WeatherData weatherData = snapshot.data!;
+          return Text("${weatherData.temperature} F",
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20));
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const CircularProgressIndicator();
+      },
+    );
 
   }
 
@@ -185,7 +253,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           // Column 1 used to display temporary data
-                          Column(children: [
+                          const Column(children: [
                             Text(
                               "21.6 mi",
                               style: TextStyle(
@@ -200,14 +268,8 @@ class _RouteDisplayState extends State<RouteDisplay> {
                                     fontSize: 10))
                           ]),
                           Column(children: [
-                            Text(
-                              "${widget.route.weatherType}",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                            ),
-                            Text("Weather",
+                            buildFutureBuilder(),
+                            const Text("Weather",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -220,20 +282,14 @@ class _RouteDisplayState extends State<RouteDisplay> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Column(children: [
-                              Text(
-                                "76.8",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20),
-                              ),
-                              Text("Tempature",
+                              buildFutureBuilder2(),
+                              const Text("Tempature",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 10))
                             ]),
-                            Column(children: [
+                            const Column(children: [
                               Text(
                                 "Bad",
                                 style: TextStyle(
@@ -249,7 +305,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
                             ])
                           ]),
                       // Column 3 used to display temporary data
-                      Column(
+                      const Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Column(children: [
