@@ -1,29 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/objects/Route.dart';
-import 'package:test_app/pages/routeDisplay.dart';
+import 'package:test_app/objects/Location.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:test_app/pages/noteDisplay.dart';
 
-final List<String> approvedRoutes = <String>['Route A', 'Route B', 'Route  C'];
-final List<RouteInfo> routes = <RouteInfo>[
-  RouteInfo('Some Route', 'Location 1', 'Location 2'),
-  RouteInfo('This Route', 'Location 2', 'Location 3'),
-  RouteInfo('This Route', 'Location 3', 'Location 4'),
-  RouteInfo('This Route', 'Location 4', 'Location 5'),
-  RouteInfo('This Route', 'Location 5', 'Location 6'),
-  RouteInfo('This Route', 'Location 6', 'Location 7'),
-  RouteInfo('This Route', 'Location 7', 'Location 8'),
-  RouteInfo('This Route', 'Location 8', 'Location 9'),
-  RouteInfo('Some Route', 'Location 1', 'Location 2'),
-  RouteInfo('This Route', 'Location 2', 'Location 3'),
-  RouteInfo('This Route', 'Location 3', 'Location 4'),
-  RouteInfo('This Route', 'Location 4', 'Location 5'),
-  RouteInfo('This Route', 'Location 5', 'Location 6'),
-  RouteInfo('This Route', 'Location 6', 'Location 7'),
-  RouteInfo('This Route', 'Location 7', 'Location 8'),
-  RouteInfo('This Route', 'Location 8', 'Location 9')
+final List<LocationInfo> locations = <LocationInfo>[
+  LocationInfo('Some Location', 1),
+  LocationInfo('This Location', 2),
+  LocationInfo('This Location', 3),
+  LocationInfo('This Location', 4),
+  LocationInfo('This Location', 5)
 ];
 
-class Driver extends StatelessWidget {
-  const Driver({super.key});
+class Notes extends StatelessWidget {
+  const Notes({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +24,7 @@ class Driver extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.grey[900],
         title: const Text(
-          "Routes Menu",
+          "locations Menu",
           style: TextStyle(color: Colors.white),
         ),
         actions: [
@@ -45,14 +35,11 @@ class Driver extends StatelessWidget {
         ],
       ),
       body: ListView.builder(
-          itemCount: routes.length,
+          itemCount: locations.length,
           itemBuilder: (context, index) => GestureDetector(
               onTap: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                RouteDisplay(route: routes[index])))
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => NotesDisplay()))
                   },
               child: routeButton(index))),
     );
@@ -72,23 +59,18 @@ class Driver extends StatelessWidget {
             decoration: const BoxDecoration(
                 border:
                     Border(right: BorderSide(width: 1, color: Colors.white))),
-            child: const Icon(Icons.fire_truck),
+            child: const Icon(Icons.domain),
           ),
           title: Text(
-            routes[index].routeName,
+            locations[index].locationName,
             style: const TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold),
           ),
           subtitle: Row(children: [
             Text(
-              routes[index].fromLocation,
+              locations[index].distance.toString(),
               style: const TextStyle(color: Colors.white),
             ),
-            const Icon(Icons.linear_scale, color: Colors.yellowAccent),
-            Text(
-              routes[index].toLocation,
-              style: const TextStyle(color: Colors.white),
-            )
           ]),
           trailing: const Icon(
             Icons.keyboard_arrow_right,

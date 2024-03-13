@@ -1,18 +1,9 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:test_app/objects/Route.dart';
-import 'package:test_app/pages/labels.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
-import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
-import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:test_app/objects/Weather.dart';
@@ -31,9 +22,6 @@ class _RouteDisplayState extends State<RouteDisplay> {
   Future<WeatherData>? _currWeather;
   Position? _currPos;
   final mapController = MapController();
-  Polyline testPolyline = Polyline(points: [LatLng(47.491947, -117.583179), LatLng(47.658137, -117.402152)], color: Colors.purpleAccent);
-  var polyEditor;
-  List<Polyline> polyLines = [];
   void _getCurrentPos() async {
     Position position = await _determinePosition();
     Future<WeatherData> weather =
@@ -43,7 +31,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
       _currWeather = weather;
     });
     mapController.moveAndRotate(
-        new LatLng(position.latitude, position.longitude), 15, 0);
+        new LatLng(position.latitude, position.longitude), 17, 0);
   }
 
   /// Determine the current position of the device.
@@ -86,40 +74,6 @@ class _RouteDisplayState extends State<RouteDisplay> {
     // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
   }
-
-
-  void loadRoute(String from, String to)async {
-    final directory = await getApplicationDocumentsDirectory();
-    String path = "${directory.path}/${from}_${to}.txt";
-    File input = File(path);
-    if(!(await input.exists())){
-      await input.create();
-    }
-    List<LatLng> points = [];
-    var inputString = await input.readAsString();
-    var pointString = inputString.split(";");
-
-    for(var p in pointString){
-      var l = p.split(',');
-
-      if(l.length > 1) {
-        LatLng point = LatLng(double.parse(l[0]), double.parse(l[1]));
-        points.add(point);
-      }
-    }
-
-    setState(() {
-      testPolyline = Polyline(points: points, color: Colors.purpleAccent);
-      polyLines.add(testPolyline);
-      polyEditor = PolyEditor(
-        points: testPolyline.points,
-        pointIcon: Icon(Icons.crop_square, size: 23),
-        intermediateIcon: Icon(Icons.lens, size: 15, color: Colors.grey),
-        callbackRefresh: () => { this.setState(() {})},
-        addClosePathMarker: false, // set to true if polygon
-      );
-    });
-
 
   Future<WeatherData> fetchWeatherData(
       String? apiKey, double lat, double lon) async {
@@ -178,14 +132,12 @@ class _RouteDisplayState extends State<RouteDisplay> {
         return const CircularProgressIndicator();
       },
     );
-
   }
 
   @override
   void initState() {
     super.initState();
-    //_getCurrentPos();
-    loadRoute(this.widget.route.fromLocation, this.widget.route.toLocation);
+    _getCurrentPos();
   }
 
   @override
@@ -210,34 +162,17 @@ class _RouteDisplayState extends State<RouteDisplay> {
       // Mapping widget
       body: FlutterMap(
         mapController: mapController,
-        options: MapOptions(
-          initialCenter: LatLng(47.501360, -111.193718),
+        options: const MapOptions(
+          initialCenter: LatLng(51.509364, -0.128928),
           initialZoom: 10,
           maxZoom: 20,
           minZoom: 1,
-
         ),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.example.app',
           ),
-          CurrentLocationLayer(
-            alignPositionOnUpdate: AlignOnUpdate.always,
-            alignDirectionOnUpdate: AlignOnUpdate.always,
-            style: LocationMarkerStyle(
-              marker: const DefaultLocationMarker(
-                child: Icon(
-                  Icons.navigation,
-                  color: Colors.white,
-                ),
-              ),
-              markerSize: const Size(40, 40),
-              markerDirection: MarkerDirection.heading,
-            ),
-          ),
-          PolylineLayer(polylines: polyLines),
-          //DragMarkers(markers: polyEditor.edit()),
           // Row used to display data on top of map widget
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Column(mainAxisAlignment: MainAxisAlignment.end, children: [
