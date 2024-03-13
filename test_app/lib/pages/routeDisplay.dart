@@ -24,10 +24,8 @@ class _RouteDisplayState extends State<RouteDisplay> {
   final mapController = MapController();
   void _getCurrentPos() async {
     Position position = await _determinePosition();
-    Future<WeatherData> weather = fetchWeatherData(
-        "9e922ed7ba5726c0f091adead1a27c86",
-        position.latitude,
-        position.longitude);
+    Future<WeatherData> weather =
+        fetchWeatherData("api-key", position.latitude, position.longitude);
     setState(() {
       _currPos = position;
       _currWeather = weather;
