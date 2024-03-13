@@ -33,7 +33,6 @@ an api for managing the database
 
 ## Getting Started
 
-
 1. Follow the flutter getting started guide by [clicking here](https://docs.flutter.dev/get-started/install).
 
 2. Once flutter is setup copy the repository to local storage.
@@ -47,9 +46,5 @@ an api for managing the database
 6. Select emulator of choice in bottom right of vscode. (Skip this step if running from terminal)
 
 7. With flutter setup and emulator chosen pressing `F5` should start the chosen emulator and flutter application. You can also run project using `flutter run -d <EmulatorName>` from the terminal.
-
-
-8. The weather won't work without the api key. Obtain one from https://home.openweathermap.org, or some other api, and put the key in routeDisplay.dart.
-
 
 
