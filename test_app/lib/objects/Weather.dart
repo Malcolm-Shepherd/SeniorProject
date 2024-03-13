@@ -53,39 +53,3 @@ class WeatherData {
     );
   }
 }
-/*
-  Column buildColumn() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        TextField(
-          controller: _controller,
-          decoration: const InputDecoration(hintText: 'Enter Title'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              //remove api key, put in secret
-              _futureAlbum = fetchWeatherData("apiKey", 44.34, 10.99);
-            });
-          },
-          child: const Text('Create Data'),
-        ),
-      ],
-    );
-  }
-
----
-
-weatherData =
-        fetchWeatherData("", 44.34, 10.99);
-    /*String? secretKey =
-        Platform.environment['WEATHER_API_KEY']; //this is the problem??
-    if (secretKey != null) {
-      print('GitHub secret value: $secretKey');
-      // Now you can use the secretKey in your code
-    } else {
-      print('GitHub secret not found');
-    }*/
-*/
-
