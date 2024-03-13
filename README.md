@@ -33,6 +33,18 @@ an api for managing the database
 
 ## Getting Started
 
-The weather won't work without the api key, once you have it, I recommend you make a file named secret.txt in the lib folder and keep a copy of the key in there. The file secret.txt is added to the .gitignore so it won't be pushed to github, but you will have to clear the key from any other places before a push(the routeDisplay file). 
+1. Follow the flutter getting started guide by [clicking here](https://docs.flutter.dev/get-started/install).
+
+2. Once flutter is setup copy the repository to local storage.
+
+3. Find local copy of repository and open using vscode.
+
+4. Using `cd test_app` from the vscode terminal, we will be in the root project folder.
+
+5. Run `flutter pub install` to install any packages.
+
+6. Select emulator of choice in bottom right of vscode. (Skip this step if running from terminal)
+
+7. With flutter setup and emulator chosen pressing `F5` should start the chosen emulator and flutter application. You can also run project using `flutter run -d <EmulatorName>` from the terminal.
 
 

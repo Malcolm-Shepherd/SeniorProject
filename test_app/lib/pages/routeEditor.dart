@@ -14,21 +14,30 @@ import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
-class RouteDisplay extends StatefulWidget {
-  const RouteDisplay({super.key, required this.route});
+class RouteEditor extends StatefulWidget {
+  const RouteEditor({super.key, required this.route});
 
   final RouteInfo route;
 
   @override
-  State<RouteDisplay> createState() => _RouteDisplayState();
+  State<RouteEditor> createState() => _RouteEditorState();
 }
 
-class _RouteDisplayState extends State<RouteDisplay> {
+
+
+class _RouteEditorState extends State<RouteEditor> {
   Position? _currPos;
   final mapController = MapController();
   Polyline testPolyline = Polyline(points: [LatLng(47.491947, -117.583179), LatLng(47.658137, -117.402152)], color: Colors.purpleAccent);
   var polyEditor;
   List<Polyline> polyLines = [];
+  final TextEditingController fromController = TextEditingController();
+  final TextEditingController toController = TextEditingController();
+  LocationLabel? selectedFrom;
+  LocationLabel? selectedTo;
+
+
+
   void _getCurrentPos() async {
     Position position = await _determinePosition();
     setState(() {
@@ -36,6 +45,57 @@ class _RouteDisplayState extends State<RouteDisplay> {
     });
     mapController.moveAndRotate(
         new LatLng(position.latitude, position.longitude), 15, 0);
+  }
+
+  void saveRoute()async{
+    if(selectedTo != null && selectedTo != null) {
+      final directory = await getApplicationDocumentsDirectory();
+      String path = "${directory.path}/${selectedFrom!.label}_${selectedTo!.label}.txt";
+      File output = File(path);
+      if(!(await output.exists())){
+        await output.create();
+      }
+      String points = "";
+      for(var point in testPolyline.points){
+        points = "${points}${point.latitude},${point.longitude};";
+        //output.writeAsString("${point.latitude},${point.longitude};");
+      }
+      output.writeAsString(points);
+    }
+  }
+
+  void loadRoute(String from, String to)async {
+    final directory = await getApplicationDocumentsDirectory();
+    String path = "${directory.path}/${from}_${to}.txt";
+    File input = File(path);
+    if(!(await input.exists())){
+      await input.create();
+    }
+    List<LatLng> points = [];
+    var inputString = await input.readAsString();
+    var pointString = inputString.split(";");
+
+    for(var p in pointString){
+      var l = p.split(',');
+
+      if(l.length > 1) {
+        LatLng point = LatLng(double.parse(l[0]), double.parse(l[1]));
+        points.add(point);
+      }
+    }
+
+    setState(() {
+      testPolyline = Polyline(points: points, color: Colors.purpleAccent);
+      polyLines.add(testPolyline);
+      polyEditor = PolyEditor(
+        points: testPolyline.points,
+        pointIcon: Icon(Icons.crop_square, size: 23),
+        intermediateIcon: Icon(Icons.lens, size: 15, color: Colors.grey),
+        callbackRefresh: () => { this.setState(() {})},
+        addClosePathMarker: false, // set to true if polygon
+      );
+    });
+
   }
 
   /// Determine the current position of the device.
@@ -79,45 +139,16 @@ class _RouteDisplayState extends State<RouteDisplay> {
     return await Geolocator.getCurrentPosition();
   }
 
-  void loadRoute(String from, String to)async {
-    final directory = await getApplicationDocumentsDirectory();
-    String path = "${directory.path}/${from}_${to}.txt";
-    File input = File(path);
-    if(!(await input.exists())){
-      await input.create();
-    }
-    List<LatLng> points = [];
-    var inputString = await input.readAsString();
-    var pointString = inputString.split(";");
 
-    for(var p in pointString){
-      var l = p.split(',');
-
-      if(l.length > 1) {
-        LatLng point = LatLng(double.parse(l[0]), double.parse(l[1]));
-        points.add(point);
-      }
-    }
-
-    setState(() {
-      testPolyline = Polyline(points: points, color: Colors.purpleAccent);
-      polyLines.add(testPolyline);
-      polyEditor = PolyEditor(
-        points: testPolyline.points,
-        pointIcon: Icon(Icons.crop_square, size: 23),
-        intermediateIcon: Icon(Icons.lens, size: 15, color: Colors.grey),
-        callbackRefresh: () => { this.setState(() {})},
-        addClosePathMarker: false, // set to true if polygon
-      );
-    });
-
-  }
 
   @override
   void initState() {
     super.initState();
-    //_getCurrentPos();
     loadRoute(this.widget.route.fromLocation, this.widget.route.toLocation);
+
+    setState(() {
+
+    });
   }
 
   @override
@@ -127,12 +158,58 @@ class _RouteDisplayState extends State<RouteDisplay> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
-        backgroundColor: Colors.grey[900],
-        title: Text(
-          widget.route.routeName,
-          style: const TextStyle(color: Colors.white),
-        ),
+        backgroundColor: Colors.grey[350],
+        // title: Text(
+        //   widget.route.routeName,
+        //   style: const TextStyle(color: Colors.white),
+        // ),
         actions: [
+          DropdownMenu<LocationLabel>(
+            controller: fromController,
+            label: const Text("From", selectionColor: Colors.white),
+            textStyle: const TextStyle(
+              color: Colors.black
+            ),
+            onSelected: (LocationLabel? location){
+              setState(() {
+                selectedFrom = location;
+              });
+            },
+            dropdownMenuEntries:
+            LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
+                (LocationLabel location) {
+                  return DropdownMenuEntry<LocationLabel>(
+                    value: location,
+                    label: location.label
+                  );
+                },
+            ).toList(),
+          ),
+          DropdownMenu<LocationLabel>(
+            controller: toController,
+            label: const Text("To", selectionColor: Colors.white),
+            textStyle: const TextStyle(
+                color: Colors.black
+            ),
+            onSelected: (LocationLabel? location){
+              setState(() {
+                selectedTo = location;
+              });
+            },
+            dropdownMenuEntries:
+            LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
+                  (LocationLabel location) {
+                return DropdownMenuEntry<LocationLabel>(
+                    value: location,
+                    label: location.label
+                );
+              },
+            ).toList(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.add_box_rounded),
+            onPressed: saveRoute,
+          ),
           IconButton(
             icon: const Icon(Icons.list),
             onPressed: _getCurrentPos,
@@ -143,6 +220,9 @@ class _RouteDisplayState extends State<RouteDisplay> {
       body: FlutterMap(
         mapController: mapController,
         options: MapOptions(
+          onTap: ( tap, ll) {
+            polyEditor.add(testPolyline.points, ll);
+            },
           initialCenter: LatLng(47.501360, -111.193718),
           initialZoom: 10,
           maxZoom: 20,
@@ -155,8 +235,8 @@ class _RouteDisplayState extends State<RouteDisplay> {
             userAgentPackageName: 'com.example.app',
           ),
           CurrentLocationLayer(
-            alignPositionOnUpdate: AlignOnUpdate.always,
-            alignDirectionOnUpdate: AlignOnUpdate.always,
+            alignPositionOnUpdate: AlignOnUpdate.never,
+            alignDirectionOnUpdate: AlignOnUpdate.never,
             style: LocationMarkerStyle(
               marker: const DefaultLocationMarker(
                 child: Icon(
@@ -169,7 +249,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
             ),
           ),
           PolylineLayer(polylines: polyLines),
-          //DragMarkers(markers: polyEditor.edit()),
+          DragMarkers(markers: polyEditor.edit()),
           // Row used to display data on top of map widget
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Column(mainAxisAlignment: MainAxisAlignment.end, children: [
