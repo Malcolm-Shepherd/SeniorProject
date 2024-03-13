@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/objects/Route.dart';
 import 'package:test_app/pages/routeDisplay.dart';
-import 'package:test_app/pages/routeEditor.dart';
 import 'package:test_app/pages/labels.dart';
-
 
 final List<String> approvedRoutes = <String>['Route A', 'Route B', 'Route  C'];
 final List<RouteInfo> routes = <RouteInfo>[
-  RouteInfo('Some Route', 'Sunny', 'Location 1', 'Location 2'),
-  RouteInfo('This Route', 'Rainy', 'Location 2', 'Location 3'),
-  RouteInfo('This Route', 'Rainy', 'Location 3', 'Location 4'),
-  RouteInfo('This Route', 'Rainy', 'Location 4', 'Location 5'),
-  RouteInfo('This Route', 'Rainy', 'Location 5', 'Location 6'),
-  RouteInfo('This Route', 'Rainy', 'Location 6', 'Location 7'),
-  RouteInfo('This Route', 'Rainy', 'Location 7', 'Location 8'),
-  RouteInfo('This Route', 'Rainy', 'Location 8', 'Location 9'),
-  RouteInfo('Some Route', 'Sunny', 'Location 1', 'Location 2'),
-  RouteInfo('This Route', 'Rainy', 'Location 2', 'Location 3'),
-  RouteInfo('This Route', 'Rainy', 'Location 3', 'Location 4'),
-  RouteInfo('This Route', 'Rainy', 'Location 4', 'Location 5'),
-  RouteInfo('This Route', 'Rainy', 'Location 5', 'Location 6'),
-  RouteInfo('This Route', 'Rainy', 'Location 6', 'Location 7'),
-  RouteInfo('This Route', 'Rainy', 'Location 7', 'Location 8'),
-  RouteInfo('This Route', 'Rainy', 'Location 8', 'Location 9')
+  RouteInfo('Some Route', 'Location 1', 'Location 2'),
+  RouteInfo('This Route', 'Location 2', 'Location 3'),
+  RouteInfo('This Route', 'Location 3', 'Location 4'),
+  RouteInfo('This Route', 'Location 4', 'Location 5'),
+  RouteInfo('This Route', 'Location 5', 'Location 6'),
+  RouteInfo('This Route', 'Location 6', 'Location 7'),
+  RouteInfo('This Route', 'Location 7', 'Location 8'),
+  RouteInfo('This Route', 'Location 8', 'Location 9'),
+  RouteInfo('Some Route', 'Location 1', 'Location 2'),
+  RouteInfo('This Route', 'Location 2', 'Location 3'),
+  RouteInfo('This Route', 'Location 3', 'Location 4'),
+  RouteInfo('This Route', 'Location 4', 'Location 5'),
+  RouteInfo('This Route', 'Location 5', 'Location 6'),
+  RouteInfo('This Route', 'Location 6', 'Location 7'),
+  RouteInfo('This Route', 'Location 7', 'Location 8'),
+  RouteInfo('This Route', 'Location 8', 'Location 9')
 ];
 
 class Driver extends StatelessWidget {
@@ -75,56 +73,56 @@ class Driver extends StatelessWidget {
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [DropdownMenu<LocationLabel>(
-                          controller: fromController,
-                          label: const Text("From", selectionColor: Colors.black),
-                          textStyle: const TextStyle(
-                              color: Colors.black
-                          ),
-                          onSelected: (LocationLabel? location){
-                            selectedFrom = location;
-                          },
-                          dropdownMenuEntries:
-                          LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
-                                (LocationLabel location) {
-                              return DropdownMenuEntry<LocationLabel>(
-                                  value: location,
-                                  label: location.label
-                              );
+                        children: [
+                          DropdownMenu<LocationLabel>(
+                            controller: fromController,
+                            label: const Text("From",
+                                selectionColor: Colors.black),
+                            textStyle: const TextStyle(color: Colors.black),
+                            onSelected: (LocationLabel? location) {
+                              selectedFrom = location;
                             },
-                          ).toList(),
-                        ),
+                            dropdownMenuEntries: LocationLabel.values
+                                .map<DropdownMenuEntry<LocationLabel>>(
+                              (LocationLabel location) {
+                                return DropdownMenuEntry<LocationLabel>(
+                                    value: location, label: location.label);
+                              },
+                            ).toList(),
+                          ),
                           DropdownMenu<LocationLabel>(
                             controller: toController,
-                            label: const Text("To", selectionColor: Colors.black),
-                            textStyle: const TextStyle(
-                                color: Colors.black
-                            ),
-                            onSelected: (LocationLabel? location){
+                            label:
+                                const Text("To", selectionColor: Colors.black),
+                            textStyle: const TextStyle(color: Colors.black),
+                            onSelected: (LocationLabel? location) {
                               selectedTo = location;
                             },
-                            dropdownMenuEntries:
-                            LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
-                                  (LocationLabel location) {
+                            dropdownMenuEntries: LocationLabel.values
+                                .map<DropdownMenuEntry<LocationLabel>>(
+                              (LocationLabel location) {
                                 return DropdownMenuEntry<LocationLabel>(
-                                    value: location,
-                                    label: location.label
-                                );
+                                    value: location, label: location.label);
                               },
                             ).toList(),
                           ),
                           IconButton(
                             icon: const Icon(Icons.add_box_outlined),
-                            onPressed:() => {
-                              if(selectedFrom != null && selectedTo != null){
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            RouteDisplay(route: RouteInfo("route", "weater", selectedFrom!.label,  selectedTo!.label))))
-                              }
+                            onPressed: () => {
+                              if (selectedFrom != null && selectedTo != null)
+                                {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => RouteDisplay(
+                                              route: RouteInfo(
+                                                  "route",
+                                                  selectedFrom!.label,
+                                                  selectedTo!.label))))
+                                }
                             },
-                          ),],
+                          ),
+                        ],
                       ),
                     ]),
               ),
