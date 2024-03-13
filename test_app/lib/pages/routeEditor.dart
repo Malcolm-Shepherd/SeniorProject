@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+import 'package:test_app/objects/Weather.dart';
 import 'package:flutter/material.dart';
 import 'package:test_app/objects/Route.dart';
 import 'package:test_app/pages/labels.dart';
@@ -23,12 +24,13 @@ class RouteEditor extends StatefulWidget {
   State<RouteEditor> createState() => _RouteEditorState();
 }
 
-
-
 class _RouteEditorState extends State<RouteEditor> {
+  Future<WeatherData>? _currWeather;
   Position? _currPos;
   final mapController = MapController();
-  Polyline testPolyline = Polyline(points: [LatLng(47.491947, -117.583179), LatLng(47.658137, -117.402152)], color: Colors.purpleAccent);
+  Polyline testPolyline = Polyline(
+      points: [LatLng(47.491947, -117.583179), LatLng(47.658137, -117.402152)],
+      color: Colors.purpleAccent);
   var polyEditor;
   List<Polyline> polyLines = [];
   final TextEditingController fromController = TextEditingController();
@@ -36,27 +38,29 @@ class _RouteEditorState extends State<RouteEditor> {
   LocationLabel? selectedFrom;
   LocationLabel? selectedTo;
 
-
-
   void _getCurrentPos() async {
     Position position = await _determinePosition();
+    Future<WeatherData> weather =
+        fetchWeatherData("api-key", position.latitude, position.longitude);
     setState(() {
       _currPos = position;
+      _currWeather = weather;
     });
     mapController.moveAndRotate(
         new LatLng(position.latitude, position.longitude), 15, 0);
   }
 
-  void saveRoute()async{
-    if(selectedTo != null && selectedTo != null) {
+  void saveRoute() async {
+    if (selectedTo != null && selectedTo != null) {
       final directory = await getApplicationDocumentsDirectory();
-      String path = "${directory.path}/${selectedFrom!.label}_${selectedTo!.label}.txt";
+      String path =
+          "${directory.path}/${selectedFrom!.label}_${selectedTo!.label}.txt";
       File output = File(path);
-      if(!(await output.exists())){
+      if (!(await output.exists())) {
         await output.create();
       }
       String points = "";
-      for(var point in testPolyline.points){
+      for (var point in testPolyline.points) {
         points = "${points}${point.latitude},${point.longitude};";
         //output.writeAsString("${point.latitude},${point.longitude};");
       }
@@ -64,21 +68,76 @@ class _RouteEditorState extends State<RouteEditor> {
     }
   }
 
-  void loadRoute(String from, String to)async {
+  Future<WeatherData> fetchWeatherData(
+      String? apiKey, double lat, double lon) async {
+    final response = await http.get(
+      Uri.parse(
+          'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&apiKey=$apiKey&units=imperial'),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      WeatherData weather = WeatherData.fromJson(jsonResponse);
+
+      return weather;
+    } else {
+      throw Exception('Failed to load weather data');
+    }
+  }
+
+  FutureBuilder<WeatherData> buildFutureBuilder() {
+    return FutureBuilder<WeatherData>(
+      future: _currWeather,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          WeatherData weatherData = snapshot.data!;
+          return Text(weatherData.mainWeather,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20));
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+
+  FutureBuilder<WeatherData> buildFutureBuilder2() {
+    return FutureBuilder<WeatherData>(
+      future: _currWeather,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          WeatherData weatherData = snapshot.data!;
+          return Text("${weatherData.temperature} F",
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20));
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+
+  void loadRoute(String from, String to) async {
     final directory = await getApplicationDocumentsDirectory();
     String path = "${directory.path}/${from}_${to}.txt";
     File input = File(path);
-    if(!(await input.exists())){
+    if (!(await input.exists())) {
       await input.create();
     }
     List<LatLng> points = [];
     var inputString = await input.readAsString();
     var pointString = inputString.split(";");
 
-    for(var p in pointString){
+    for (var p in pointString) {
       var l = p.split(',');
 
-      if(l.length > 1) {
+      if (l.length > 1) {
         LatLng point = LatLng(double.parse(l[0]), double.parse(l[1]));
         points.add(point);
       }
@@ -91,11 +150,10 @@ class _RouteEditorState extends State<RouteEditor> {
         points: testPolyline.points,
         pointIcon: Icon(Icons.crop_square, size: 23),
         intermediateIcon: Icon(Icons.lens, size: 15, color: Colors.grey),
-        callbackRefresh: () => { this.setState(() {})},
+        callbackRefresh: () => {this.setState(() {})},
         addClosePathMarker: false, // set to true if polygon
       );
     });
-
   }
 
   /// Determine the current position of the device.
@@ -139,16 +197,12 @@ class _RouteEditorState extends State<RouteEditor> {
     return await Geolocator.getCurrentPosition();
   }
 
-
-
   @override
   void initState() {
     super.initState();
     loadRoute(this.widget.route.fromLocation, this.widget.route.toLocation);
 
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -167,42 +221,34 @@ class _RouteEditorState extends State<RouteEditor> {
           DropdownMenu<LocationLabel>(
             controller: fromController,
             label: const Text("From", selectionColor: Colors.white),
-            textStyle: const TextStyle(
-              color: Colors.black
-            ),
-            onSelected: (LocationLabel? location){
+            textStyle: const TextStyle(color: Colors.black),
+            onSelected: (LocationLabel? location) {
               setState(() {
                 selectedFrom = location;
               });
             },
             dropdownMenuEntries:
-            LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
-                (LocationLabel location) {
-                  return DropdownMenuEntry<LocationLabel>(
-                    value: location,
-                    label: location.label
-                  );
-                },
+                LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
+              (LocationLabel location) {
+                return DropdownMenuEntry<LocationLabel>(
+                    value: location, label: location.label);
+              },
             ).toList(),
           ),
           DropdownMenu<LocationLabel>(
             controller: toController,
             label: const Text("To", selectionColor: Colors.white),
-            textStyle: const TextStyle(
-                color: Colors.black
-            ),
-            onSelected: (LocationLabel? location){
+            textStyle: const TextStyle(color: Colors.black),
+            onSelected: (LocationLabel? location) {
               setState(() {
                 selectedTo = location;
               });
             },
             dropdownMenuEntries:
-            LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
-                  (LocationLabel location) {
+                LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
+              (LocationLabel location) {
                 return DropdownMenuEntry<LocationLabel>(
-                    value: location,
-                    label: location.label
-                );
+                    value: location, label: location.label);
               },
             ).toList(),
           ),
@@ -220,14 +266,13 @@ class _RouteEditorState extends State<RouteEditor> {
       body: FlutterMap(
         mapController: mapController,
         options: MapOptions(
-          onTap: ( tap, ll) {
+          onTap: (tap, ll) {
             polyEditor.add(testPolyline.points, ll);
-            },
+          },
           initialCenter: LatLng(47.501360, -111.193718),
           initialZoom: 10,
           maxZoom: 20,
           minZoom: 1,
-
         ),
         children: [
           TileLayer(
@@ -237,14 +282,14 @@ class _RouteEditorState extends State<RouteEditor> {
           CurrentLocationLayer(
             alignPositionOnUpdate: AlignOnUpdate.never,
             alignDirectionOnUpdate: AlignOnUpdate.never,
-            style: LocationMarkerStyle(
-              marker: const DefaultLocationMarker(
+            style: const LocationMarkerStyle(
+              marker: DefaultLocationMarker(
                 child: Icon(
                   Icons.navigation,
                   color: Colors.white,
                 ),
               ),
-              markerSize: const Size(40, 40),
+              markerSize: Size(40, 40),
               markerDirection: MarkerDirection.heading,
             ),
           ),
@@ -265,7 +310,7 @@ class _RouteEditorState extends State<RouteEditor> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           // Column 1 used to display temporary data
-                          Column(children: [
+                          const Column(children: [
                             Text(
                               "21.6 mi",
                               style: TextStyle(
@@ -280,14 +325,8 @@ class _RouteEditorState extends State<RouteEditor> {
                                     fontSize: 10))
                           ]),
                           Column(children: [
-                            Text(
-                              "${widget.route.weatherType}",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                            ),
-                            Text("Weather",
+                            buildFutureBuilder(),
+                            const Text("Weather",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -300,20 +339,14 @@ class _RouteEditorState extends State<RouteEditor> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Column(children: [
-                              Text(
-                                "76.8",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20),
-                              ),
-                              Text("Tempature",
+                              buildFutureBuilder2(),
+                              const Text("Tempature",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 10))
                             ]),
-                            Column(children: [
+                            const Column(children: [
                               Text(
                                 "Bad",
                                 style: TextStyle(
@@ -329,7 +362,7 @@ class _RouteEditorState extends State<RouteEditor> {
                             ])
                           ]),
                       // Column 3 used to display temporary data
-                      Column(
+                      const Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Column(children: [
