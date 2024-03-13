@@ -4,6 +4,7 @@ description: A new Flutter project.
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
+
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -38,9 +39,7 @@ dependencies:
   latlong2: ^0.9.0
   flutter_map_cancellable_tile_provider: ^1.0.0
   geolocator: ^10.1.0
-  flutter_map_line_editor: ^6.0.0
-  path_provider: ^2.1.2
-  flutter_map_location_marker: any # or latest verion
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -69,9 +68,6 @@ flutter:
      - images/test0.png
      - images/test1.png
      - images/test2.png
-     - assets/routes/
-     - mock_data/MOCK_SITE_LOCATION.json
-     - mock_data/MOCK_NOTE.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

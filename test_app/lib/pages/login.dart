@@ -57,14 +57,6 @@ class LoginPage extends StatelessWidget {
                               style: TextStyle(fontSize: 20),
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () =>
-                            {Navigator.pushNamed(context, '/editor')},
-                            child: const Text(
-                              "Route Editor",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
                         ],
                       ),
                     ]),
