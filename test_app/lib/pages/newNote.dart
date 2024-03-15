@@ -7,7 +7,7 @@ void writeToJSON(Map<String, dynamic> data, String filePath) async {
   String jsonString = jsonEncode(data);
 
   // Write JSON string to file
-  File file = File(filePath);
+  File file = File('mock_data/MOCK_NOTE.json');
   await file.writeAsString(jsonString);
 }
 

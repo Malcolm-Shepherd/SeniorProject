@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:test_app/objects/Location.dart';
 import 'package:test_app/pages/newNote.dart';
 import 'package:test_app/pages/noteDisplay.dart';
 
@@ -72,7 +71,7 @@ class NotesDisplay extends StatelessWidget {
     return ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) {
-          if (data![index]['site_id'] == id) {
+          if (data![index]['site_id'] == 1) {
             // If the ID matches, return the GestureDetector with routeButton
             return GestureDetector(
               onTap: () {
@@ -83,134 +82,11 @@ class NotesDisplay extends StatelessWidget {
                           NoteDisplay(id: id, note: data![index])),
                 );
               },
-              child: noteCard(data[index]),
+              child: Container(),
             );
-          } else {
             // If the ID doesn't match, return null
             return Container();
           }
         });
-  }
-
-  Card routeButton(int index, List<Map<String, dynamic>>? data) {
-    data ??= [];
-
-    return Card(
-      elevation: 8,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      child: Container(
-        decoration: BoxDecoration(color: Colors.grey[900]),
-        child: ListTile(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          leading: Container(
-            padding: const EdgeInsets.only(right: 12.0),
-            decoration: const BoxDecoration(
-                border:
-                    Border(right: BorderSide(width: 1, color: Colors.white))),
-            child: const Icon(Icons.domain),
-          ),
-          title: Text(
-            data[index]['title'].toString(),
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          subtitle: Row(children: [
-            const Text(
-              "Priority: ",
-              style: const TextStyle(color: Colors.white),
-            ),
-            Text(
-              data[index]['priority'].toString(),
-              style: const TextStyle(color: Colors.white),
-            ),
-          ]),
-          trailing: const Icon(
-            Icons.keyboard_arrow_right,
-            color: Colors.white,
-            size: 30,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget noteCard(Map<String, dynamic> data) {
-    return Expanded(
-      child: Container(
-        constraints: const BoxConstraints(minWidth: 4000),
-        margin: const EdgeInsets.all(5.0),
-        padding: const EdgeInsets.all(15.0),
-        decoration: BoxDecoration(
-          color: Colors.grey[900],
-        ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(
-                  "Note Title:",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
-            ),
-            Text(
-              data['title'].toString(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Divider(
-              color: Colors.white,
-              thickness: 1,
-            ),
-            const Row(
-              children: [
-                Text(
-                  "\nPriority: ",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
-            ),
-            Text(
-              data['priority'].toString(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Divider(
-              color: Colors.white,
-              thickness: 1,
-            ),
-            const Text("\nNote Contents: ",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                )),
-            Text(
-              data['content'],
-              style: const TextStyle(color: Colors.white),
-            ),
-            const Divider(
-              color: Colors.white,
-              thickness: 1,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

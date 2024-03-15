@@ -51,7 +51,7 @@ class LoginPage extends StatelessWidget {
                           ),
                           ElevatedButton(
                             onPressed: () =>
-                                {Navigator.pushNamed(context, '/tasks')},
+                                {Navigator.pushNamed(context, '/schedule')},
                             child: const Text(
                               "Task Handling",
                               style: TextStyle(fontSize: 20),

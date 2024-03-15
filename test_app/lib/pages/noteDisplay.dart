@@ -63,11 +63,11 @@ class NoteDisplay extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Row(
+            const Row(
               children: [
                 Text(
                   "Note Title:",
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
