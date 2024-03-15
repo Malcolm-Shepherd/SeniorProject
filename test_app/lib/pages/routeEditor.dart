@@ -1,29 +1,30 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
+import 'package:test_app/objects/Weather.dart';
 import 'package:flutter/material.dart';
 import 'package:test_app/objects/Route.dart';
+import 'package:test_app/pages/labels.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
+import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:flutter_map_line_editor/flutter_map_line_editor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
-import 'package:http/http.dart' as http;
-import 'package:test_app/objects/Weather.dart';
-
-class RouteDisplay extends StatefulWidget {
-  const RouteDisplay({super.key, required this.route});
+class RouteEditor extends StatefulWidget {
+  const RouteEditor({super.key, required this.route});
 
   final RouteInfo route;
 
   @override
-  State<RouteDisplay> createState() => _RouteDisplayState();
+  State<RouteEditor> createState() => _RouteEditorState();
 }
 
-class _RouteDisplayState extends State<RouteDisplay> {
+class _RouteEditorState extends State<RouteEditor> {
   Future<WeatherData>? _currWeather;
   Position? _currPos;
   final mapController = MapController();
@@ -32,6 +33,11 @@ class _RouteDisplayState extends State<RouteDisplay> {
       color: Colors.purpleAccent);
   var polyEditor;
   List<Polyline> polyLines = [];
+  final TextEditingController fromController = TextEditingController();
+  final TextEditingController toController = TextEditingController();
+  LocationLabel? selectedFrom;
+  LocationLabel? selectedTo;
+
   void _getCurrentPos() async {
     Position position = await _determinePosition();
     Future<WeatherData> weather =
@@ -44,45 +50,22 @@ class _RouteDisplayState extends State<RouteDisplay> {
         new LatLng(position.latitude, position.longitude), 15, 0);
   }
 
-  /// Determine the current position of the device.
-  ///
-  /// When the location services are not enabled or permissions
-  /// are denied the `Future` will return an error.
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        return Future.error('Location permissions are denied');
+  void saveRoute() async {
+    if (selectedTo != null && selectedTo != null) {
+      final directory = await getApplicationDocumentsDirectory();
+      String path =
+          "${directory.path}/${selectedFrom!.label}_${selectedTo!.label}.txt";
+      File output = File(path);
+      if (!(await output.exists())) {
+        await output.create();
       }
+      String points = "";
+      for (var point in testPolyline.points) {
+        points = "${points}${point.latitude},${point.longitude};";
+        //output.writeAsString("${point.latitude},${point.longitude};");
+      }
+      output.writeAsString(points);
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    return await Geolocator.getCurrentPosition();
   }
 
   Future<WeatherData> fetchWeatherData(
@@ -173,11 +156,53 @@ class _RouteDisplayState extends State<RouteDisplay> {
     });
   }
 
+  /// Determine the current position of the device.
+  ///
+  /// When the location services are not enabled or permissions
+  /// are denied the `Future` will return an error.
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
+  }
+
   @override
   void initState() {
     super.initState();
-    //_getCurrentPos();
     loadRoute(this.widget.route.fromLocation, this.widget.route.toLocation);
+
+    setState(() {});
   }
 
   @override
@@ -187,12 +212,50 @@ class _RouteDisplayState extends State<RouteDisplay> {
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
-        backgroundColor: Colors.grey[900],
-        title: Text(
-          widget.route.routeName,
-          style: const TextStyle(color: Colors.white),
-        ),
+        backgroundColor: Colors.grey[350],
+        // title: Text(
+        //   widget.route.routeName,
+        //   style: const TextStyle(color: Colors.white),
+        // ),
         actions: [
+          DropdownMenu<LocationLabel>(
+            controller: fromController,
+            label: const Text("From", selectionColor: Colors.white),
+            textStyle: const TextStyle(color: Colors.black),
+            onSelected: (LocationLabel? location) {
+              setState(() {
+                selectedFrom = location;
+              });
+            },
+            dropdownMenuEntries:
+                LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
+              (LocationLabel location) {
+                return DropdownMenuEntry<LocationLabel>(
+                    value: location, label: location.label);
+              },
+            ).toList(),
+          ),
+          DropdownMenu<LocationLabel>(
+            controller: toController,
+            label: const Text("To", selectionColor: Colors.white),
+            textStyle: const TextStyle(color: Colors.black),
+            onSelected: (LocationLabel? location) {
+              setState(() {
+                selectedTo = location;
+              });
+            },
+            dropdownMenuEntries:
+                LocationLabel.values.map<DropdownMenuEntry<LocationLabel>>(
+              (LocationLabel location) {
+                return DropdownMenuEntry<LocationLabel>(
+                    value: location, label: location.label);
+              },
+            ).toList(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.add_box_rounded),
+            onPressed: saveRoute,
+          ),
           IconButton(
             icon: const Icon(Icons.list),
             onPressed: _getCurrentPos,
@@ -202,7 +265,10 @@ class _RouteDisplayState extends State<RouteDisplay> {
       // Mapping widget
       body: FlutterMap(
         mapController: mapController,
-        options: const MapOptions(
+        options: MapOptions(
+          onTap: (tap, ll) {
+            polyEditor.add(testPolyline.points, ll);
+          },
           initialCenter: LatLng(47.501360, -111.193718),
           initialZoom: 10,
           maxZoom: 20,
@@ -214,8 +280,8 @@ class _RouteDisplayState extends State<RouteDisplay> {
             userAgentPackageName: 'com.example.app',
           ),
           CurrentLocationLayer(
-            alignPositionOnUpdate: AlignOnUpdate.always,
-            alignDirectionOnUpdate: AlignOnUpdate.always,
+            alignPositionOnUpdate: AlignOnUpdate.never,
+            alignDirectionOnUpdate: AlignOnUpdate.never,
             style: const LocationMarkerStyle(
               marker: DefaultLocationMarker(
                 child: Icon(
@@ -228,7 +294,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
             ),
           ),
           PolylineLayer(polylines: polyLines),
-          //DragMarkers(markers: polyEditor.edit()),
+          DragMarkers(markers: polyEditor.edit()),
           // Row used to display data on top of map widget
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Column(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -282,7 +348,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
                             ]),
                             const Column(children: [
                               Text(
-                                "Bad*",
+                                "Bad",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,

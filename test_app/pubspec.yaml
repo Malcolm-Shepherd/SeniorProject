@@ -40,7 +40,10 @@ dependencies:
   geolocator: ^10.1.0
   table_calendar: ^3.1.0
   syncfusion_flutter_calendar: ^24.2.7
-
+  flutter_map_line_editor: ^6.0.0
+  path_provider: ^2.1.2
+  flutter_map_location_marker: any # or latest verion
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +72,7 @@ flutter:
      - images/test0.png
      - images/test1.png
      - images/test2.png
+     - assets/routes/
      - mock_data/MOCK_SITE_LOCATION.json
      - mock_data/MOCK_NOTE.json
      - mock_data/MOCK_JOBS.json

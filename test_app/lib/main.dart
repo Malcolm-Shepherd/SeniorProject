@@ -7,6 +7,7 @@ import 'package:test_app/pages/driver.dart';
 import 'package:test_app/pages/locListDispay.dart';
 import 'package:test_app/pages/taskHandling.dart';
 import 'package:test_app/pages/tasks.dart';
+import 'package:test_app/pages/editor.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         '/notes': (context) => const Notes(),
         '/tasks': (context) => const Tasks(),
         '/schedule': (context) => const TaskHandling()
+        '/editor': (context) => const Editor()
       },
     );
   }
