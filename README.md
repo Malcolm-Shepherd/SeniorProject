@@ -45,6 +45,9 @@ an api for managing the database
 
 6. Select emulator of choice in bottom right of vscode. (Skip this step if running from terminal)
 
-7. With flutter setup and emulator chosen pressing `F5` should start the chosen emulator and flutter application. You can also run project using `flutter run -d <EmulatorName>` from the terminal.
+7. You will need to obtain an api key from OpenWeatherMap.org or some other weather api, and then place that api-key into routeDisplay.dart and routeEditor.dart, or just comment out the call to _getWeather() in the initState() method in each of those previously mentioned files.
+
+8. With flutter setup and emulator chosen pressing `F5` should start the chosen emulator and flutter application. You can also run project using `flutter run -d <EmulatorName>` from the terminal.
+
 
 

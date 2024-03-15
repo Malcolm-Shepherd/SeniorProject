@@ -32,16 +32,25 @@ class _RouteDisplayState extends State<RouteDisplay> {
       color: Colors.purpleAccent);
   var polyEditor;
   List<Polyline> polyLines = [];
+
   void _getCurrentPos() async {
     Position position = await _determinePosition();
-    Future<WeatherData> weather =
-        fetchWeatherData("api-key", position.latitude, position.longitude);
     setState(() {
       _currPos = position;
-      _currWeather = weather;
     });
     mapController.moveAndRotate(
         new LatLng(position.latitude, position.longitude), 15, 0);
+  }
+
+  void _getWeather() async {
+    Position position = await _determinePosition();
+    Future<WeatherData> weather = fetchWeatherData(
+        "api-key", //  <---- enter api key here
+        position.latitude,
+        position.longitude);
+    setState(() {
+      _currWeather = weather;
+    });
   }
 
   /// Determine the current position of the device.
@@ -178,6 +187,7 @@ class _RouteDisplayState extends State<RouteDisplay> {
     super.initState();
     //_getCurrentPos();
     loadRoute(this.widget.route.fromLocation, this.widget.route.toLocation);
+    _getWeather(); //comment this line if no api-key
   }
 
   @override
