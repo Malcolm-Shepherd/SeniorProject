@@ -14,15 +14,15 @@ This app will be used by multiple different positions at the same place. The peo
 
 ## Requirements
 
-### R2	App Set-up	❌
+### R2	App Set-up	✅
 Just setting up the very basics for the app
-### R3	Map	❌
+### R3	Map	✅
 Basic map function
-### R4	GPS/Location	❌
+### R4	GPS/Location	✅
 Adding GPS functionality/location services for weather and map
-### R5	Route Creator	❌
+### R5	Route Creator	✅
 Adding the ability to create/modify approved routes on the map
-### R6	Weather	❌
+### R6	Weather	✅
 Adding some sort of weather info available in the app
 ### R7	Traffic Camera Access	❌
 application has access to local traffic cameras
@@ -45,6 +45,8 @@ an api for managing the database
 
 6. Select emulator of choice in bottom right of vscode. (Skip this step if running from terminal)
 
-7. With flutter setup and emulator chosen pressing `F5` should start the chosen emulator and flutter application. You can also run project using `flutter run -d <EmulatorName>` from the terminal.
+7. You will need to obtain an api key from OpenWeatherMap.org or some other weather api, and then place that api-key into routeDisplay.dart and routeEditor.dart, or just comment out the call to _getWeather() in the initState() method in each of those previously mentioned files.
+
+8. With flutter setup and emulator chosen pressing `F5` should start the chosen emulator and flutter application. You can also run project using `flutter run -d <EmulatorName>` from the terminal.
 
 
