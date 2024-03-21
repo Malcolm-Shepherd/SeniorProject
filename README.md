@@ -49,4 +49,7 @@ an api for managing the database
 
 8. With flutter setup and emulator chosen pressing `F5` should start the chosen emulator and flutter application. You can also run project using `flutter run -d <EmulatorName>` from the terminal.
 
+-----
+
+most of the work has been done in the dev branch
 
