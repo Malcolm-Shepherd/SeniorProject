@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         '/driver': (context) => const Driver(),
         '/notes': (context) => const Notes(),
         '/tasks': (context) => const Tasks(),
-        '/schedule': (context) => const TaskHandling()
+        '/schedule': (context) => const TaskHandling(),
         '/editor': (context) => const Editor()
       },
     );
